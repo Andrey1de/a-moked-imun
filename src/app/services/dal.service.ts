@@ -3,7 +3,7 @@ import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
-import { addDays, dateToString, midnight } from '../utils/utils';
+import { addDays, dateToString, getMidnight } from '../utils/utils';
 const prefix: string = 'AMokedIminGlobals';
 
 class CGlobals {
@@ -43,7 +43,7 @@ class CGlobals {
     if (CGlobals._beginDate.getTime() === 0 && localStorage) {
       let _beginDateStr = localStorage?.getItem(this.prefix + '_beginDate');
       if (_beginDateStr) {
-        CGlobals._beginDate = midnight(new Date(_beginDateStr));
+        CGlobals._beginDate = getMidnight(new Date(_beginDateStr));
       }
     }
     return CGlobals._beginDate;
@@ -75,7 +75,10 @@ export class DalService {
     return this._endDate;
   }
   readonly mapSiteJson: Map<number, ISiteJson> = new Map<number, ISiteJson>();
-  // readonly mapGuardJson: Map<number, IGuardJson> = new Map<
+  readonly mapGuardJson: Map<number, IGuardJson> = new Map<
+    number,
+    IGuardJson
+  >();
   getSite(siteId: number): ISiteJson {
     return (
       this.mapSiteJson.get(siteId) ||
@@ -86,6 +89,18 @@ export class DalService {
         //  watchStrArr: [],
         watchPlan: [],
       } as ISiteJson)
+    );
+  }
+  getGuard(guardId: number): IGuardJson {
+    return (
+      this.mapGuardJson.get(guardId) ||
+      ({
+        guardId: guardId,
+        manager: '--',
+        name: 'GUARD ERROR',
+        background: 'red',
+        textColor: 'white',
+      } as IGuardJson)
     );
   }
   private iSites: ISiteJson[] = []; //MokSitesJSon;
@@ -103,13 +118,13 @@ export class DalService {
       }
     }
   }
-  toInit() {
+  private toInit() {
     Globals.init();
     this._endDate = addDays(this.beginDate, this.nDays);
     this.retriveSites();
     this.retrieveGuards();
   }
-  retrieveGuards() {
+  private retrieveGuards() {
     const iGuardStr = localStorage?.getItem(prefix + '_iGuards');
     if (iGuardStr) {
       let jsonObj: any = JSON.parse(iGuardStr); // string to generic object first
@@ -118,8 +133,12 @@ export class DalService {
       this.iGuards = MOKGuardsJSon;
       localStorage?.setItem(prefix + '_iGuards', JSON.stringify(this.iGuards));
     }
+
+    this.mapGuardJson.clear();
+    this.iGuards.forEach((g) => this.mapGuardJson.set(g.guardId, g));
+   
   }
-  retriveSites() {
+  private retriveSites() {
     const iSiteStr = localStorage?.getItem(prefix + '_iSites');
     if (iSiteStr) {
       let jsonObj: any = JSON.parse(iSiteStr); // string to generic object first
@@ -128,6 +147,9 @@ export class DalService {
       this.iSites = MokSitesJSon;
       localStorage?.setItem(prefix + '_iSites', JSON.stringify(this.iSites));
     }
+    this.mapSiteJson.clear();
+    this.iSites.forEach((g) => this.mapSiteJson.set(g.siteId, g));
+
     // throw new Error('Method not implemented.');
   }
 }

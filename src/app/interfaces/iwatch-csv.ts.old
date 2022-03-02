@@ -74,7 +74,7 @@ export function daySiteWatchesCsv(
   if (!Array.isArray(watchPlan) || watchPlan.length !== 7) {
     return arr;
   }
-  midnight = U.midnight(midnight);
+  midnight = U.getMidnight(midnight);
   let midnightMs = midnight.getTime();
   const midnightStr = U.dateToString(midnight);
 

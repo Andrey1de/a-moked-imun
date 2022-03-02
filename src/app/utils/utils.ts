@@ -21,7 +21,7 @@ export const HEB_DAYS = [
   'ו' + "'",
   'שבת',
 ];
-export function midnight(date: Date): Date {
+export function getMidnight(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth() , date.getDate());
 }
 export function dateToId(date: Date, siteId: number = 0): number {
