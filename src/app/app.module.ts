@@ -1,16 +1,24 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule, Routes } from '@angular/router';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
+import { SiteWatchesComponent } from './ui/site-watches/site-watches.component';
+import { HomeComponent } from './ui/home/home.component';
+const routes: Routes = [
+  { path: 'home', component: HomeComponent },
+  { path: 'site-watches', component: SiteWatchesComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' } //
+];
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SiteWatchesComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    RouterModule.forRoot(routes)
   ],
   providers: [],
   bootstrap: [AppComponent]

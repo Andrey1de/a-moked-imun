@@ -3,7 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+
+  isMOK: false,
+  isFILE: true,
+  csvFileName: 'isite-csv.csv',
+  direction: 'rtl',
+
+  urlSites: 'https://aed-data-cloud.herokuapp.com/cloud/users/shay/sites',
+  urlGuards: 'https://aed-data-cloud.herokuapp.com/cloud/users/shay/guards',
+  urlWatches: 'https://aed-data-cloud.herokuapp.com/cloud/users/shay/watches',
 };
 
 /*
