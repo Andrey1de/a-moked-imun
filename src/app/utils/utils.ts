@@ -28,8 +28,9 @@ export function dateToId(date: Date, siteId: number = 0): number {
   return msToId(date.getTime(), siteId);
 }
 export function msToId(ms: number, siteId: number = 0): number {
-  let ret = (((ms - BeginMs2022) / MS_IN_H5) | 0) * 1000 
-  ret += (siteId % 1000);
+  let ret = (((ms - BeginMs2022) / MS_IN_H5) | 0) * 10000 
+  ret += (siteId % 1000) * 10;
+  
   return ret;
 }
 export function h5ToMS(h5: number): number {

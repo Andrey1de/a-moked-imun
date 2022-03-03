@@ -3,6 +3,7 @@ import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
+import { IWatch } from '../interfaces/iwatch';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
 const prefix: string = 'AMokedIminGlobals';
 
@@ -54,6 +55,48 @@ class CGlobals {
       dateToString(date, false)
     );
     CGlobals._beginDate = date;
+  }
+}
+
+export class WatchCell {
+  constructor(readonly siteId: number, readonly midnight: string) {}
+
+  private _dirty: boolean = false;
+  public get dirty(): boolean {
+    return this._dirty;
+  }
+  // private set dirty(v : boolean) {
+  //   this._dirty = v;
+  // }
+
+  private _watches: Map<number,IWatch> = new Map<number,IWatch>();
+  public get watches(): IWatch[] {
+    return [...this._watches.values()];
+  }
+  //Info dirty flag for
+  public setWatches(
+    watches: IWatch[],
+    dirty: boolean = true,
+    toFilter: boolean = false ) {
+    if (toFilter) {
+      watches = watches.filter(
+        (w) => w.siteId == this.siteId 
+          && w.midnight == this.midnight
+      );
+    }
+    this._dirty = dirty;
+    this._watches = watches;
+  }
+  public addWatch(
+    watch: IWatch,
+   ): boolean {
+    if (watch.siteId == this.siteId && 
+      watch.midnight == this.midnight && 
+      this._watches.find()) {
+      this._watches.push(watch);
+      re
+    }
+    
   }
 }
 

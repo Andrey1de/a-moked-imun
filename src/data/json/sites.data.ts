@@ -1,11 +1,9 @@
-import { ISiteJson } from 'src/app/interfaces/isite-json';
-//PUT / GET  /https://aed-data-cloud.herokuapp.com/cloud/users/shay/sites
-
 export const MokSitesJSon: ISiteJson[] = [
   {
     siteId: 3,
     name: 'אבטליון השכרה סגולה',
     address: '????',
+    nwatches: 3,
     watchPlan: [
       [
         [6.5, 14.5],
@@ -48,6 +46,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 11,
     name: 'ביטוח',
     address: '????',
+    nwatches: 2,
     watchPlan: [
       [
         [7.5, 14.5],
@@ -77,6 +76,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 12,
     name: '2-ביטוח',
     address: '????',
+    nwatches: 1,
     watchPlan: [
       [[8.0, 12.0]],
       [[8.0, 12.0]],
@@ -91,41 +91,42 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 13,
     name: 'עץ הזית',
     address: 'ישראל פוקס 1',
+    nwatches: 3,
     watchPlan: [
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
       [
         [6.5, 14.5],
-        [14.5, 23.5],
-        [23.5, 6.5],
+        [14.5, 22.5],
+        [22.5, 6.5],
       ],
     ],
   },
@@ -133,6 +134,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 14,
     name: 'אוטו קלאב',
     address: '???',
+    nwatches: 1,
     watchPlan: [
       [[6.5, 18.0]],
       [[6.5, 18.0]],
@@ -147,6 +149,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 15,
     name: 'אבטליון השכרה סגולה',
     address: '???',
+    nwatches: 3,
     watchPlan: [
       [
         [6.5, 14.5],
@@ -189,6 +192,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 21,
     name: 'לובי',
     address: '???',
+    nwatches: 3,
     watchPlan: [
       [
         [7.0, 15.0],
@@ -231,6 +235,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 22,
     name: 'כניסה ספקים',
     address: 'סמתה תבור 4',
+    nwatches: 3,
     watchPlan: [
       [
         [6.0, 14.0],
@@ -273,6 +278,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 23,
     name: 'תיגבור',
     address: 'אלקסנדר ינאי 1',
+    nwatches: 2,
     watchPlan: [
       [[19.0, 7.0]],
       [[19.0, 7.0]],
@@ -293,6 +299,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 31,
     name: 'בית ספר נועם',
     address: 'צהל 71 פתח תיקוה',
+    nwatches: 2,
     watchPlan: [
       [
         [14.0, 23.0],
@@ -320,8 +327,9 @@ export const MokSitesJSon: ISiteJson[] = [
   },
   {
     siteId: 32,
-    name: 'BMW',
+    name: 'BMW דלק',
     address: '???',
+    nwatches: 3,
     watchPlan: [
       [
         [7.0, 15.0],
@@ -364,6 +372,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 32,
     name: 'פרימיום סמלות',
     address: 'גיסין 98 פיית',
+    nwatches: 3,
     watchPlan: [
       [
         [7.0, 15.0],
@@ -406,6 +415,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 33,
     name: 'הנהלה סמלות',
     address: '????',
+    nwatches: 2,
     watchPlan: [
       [
         [6.0, 13.5],
@@ -435,6 +445,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 34,
     name: 'סובארו סמלות',
     address: '????',
+    nwatches: 2,
     watchPlan: [
       [
         [6.0, 13.0],
@@ -464,6 +475,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 40,
     name: 'מילג',
     address: '????',
+    nwatches: 2,
     watchPlan: [
       [
         [7.0, 15.5],
@@ -493,6 +505,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 41,
     name: 'תדיראן',
     address: '????',
+    nwatches: 1,
     watchPlan: [
       [[8.0, 18.0]],
       [[8.0, 18.0]],
@@ -507,6 +520,7 @@ export const MokSitesJSon: ISiteJson[] = [
     siteId: 42,
     name: 'שומרה',
     address: '????',
+    nwatches: 1,
     watchPlan: [
       [[10.0, 19.0]],
       [[10.0, 19.0]],

@@ -1,17 +1,17 @@
 import { ISiteJson } from "./isite-json";
-import { dateToString, getMidnight, msToId, MS_IN_DAY, MS_IN_HOUR } from "../utils/utils";
+import { dateToString, getMidnight, msToId as msToIdh, MS_IN_DAY, MS_IN_HOUR } from "../utils/utils";
 
 export interface IWatch {
     idh5: number;
     siteId: number; // "2";
     guardId: number; // "101";
-    midnight ?: string;
+    midnight : string;
     begin: Date; // new Date(beginS * 1000) from 2022-01-01
     end?: Date;
     lengthH: number; // new Date(endS * 1000);
  };
 
-export function greateDaySiteWatches(
+export function createDaySiteWatches(
   midnight: Date,
   iSite: ISiteJson
 ): IWatch[] {
@@ -45,7 +45,7 @@ export function greateDaySiteWatches(
            
             const _siteId = iSite.siteId;
             const _begMS = midnight.getTime() + begH * MS_IN_HOUR;
-            const _idh5 = msToId(_begMS,_siteId);
+            const _idh5 = msToIdh(_begMS,_siteId);
             const watch = {
                 idh5:_idh5,
                 siteId: _siteId, // "2";
@@ -60,4 +60,4 @@ export function greateDaySiteWatches(
    }
   return arr;
 }
-/
+

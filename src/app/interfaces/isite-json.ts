@@ -3,6 +3,7 @@ export interface ISiteJson {
     name: string;//  אפקון תגבור,
     address?: string;// אלכסנדר ינאי 1,
     phone?: string;
+    nwatches?: number;
     
        //name: string;
    // watchStrArr: string[];[7][[beg.end]]
