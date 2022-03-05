@@ -3,13 +3,12 @@ import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
-import { IWatch } from '../interfaces/iwatch';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
-const prefix: string = 'AMokedIminGlobals';
+const prefix: string = 'AMokedImunGlobals';
 
 class CGlobals {
   //beginDate: Date = midnight(new Date());
-
+  readonly prefix: string = 'a-moked-imun-CGlobals';
   static nDays: number = 7;
   readonly isLocal: boolean = !!localStorage;
   init() {
@@ -57,49 +56,40 @@ class CGlobals {
     CGlobals._beginDate = date;
   }
 }
-
-export class WatchCell {
-  constructor(readonly siteId: number, readonly midnight: string) {}
-
-  private _dirty: boolean = false;
-  public get dirty(): boolean {
-    return this._dirty;
-  }
-  // private set dirty(v : boolean) {
-  //   this._dirty = v;
-  // }
-
-  private _watches: Map<number,IWatch> = new Map<number,IWatch>();
-  public get watches(): IWatch[] {
-    return [...this._watches.values()];
-  }
-  //Info dirty flag for
-  public setWatches(
-    watches: IWatch[],
-    dirty: boolean = true,
-    toFilter: boolean = false ) {
-    if (toFilter) {
-      watches = watches.filter(
-        (w) => w.siteId == this.siteId 
-          && w.midnight == this.midnight
-      );
-    }
-    this._dirty = dirty;
-    this._watches = watches;
-  }
-  public addWatch(
-    watch: IWatch,
-   ): boolean {
-    if (watch.siteId == this.siteId && 
-      watch.midnight == this.midnight && 
-      this._watches.find()) {
-      this._watches.push(watch);
-      re
-    }
-    
-  }
+const globalMapSiteJson: Map<number, ISiteJson> = 
+              new Map<number, ISiteJson>();
+const globalMapGuardJson: Map<number, IGuardJson> = 
+              new Map<number,IGuardJson>();
+export function globalAllSites(): ISiteJson[] {
+  return [...globalMapSiteJson.values()];
 }
-
+export function globalAllGuards(): IGuardJson[] {
+  return [...globalMapGuardJson.values()];
+}
+export function globalSite(siteId: number): ISiteJson {
+  return (
+    globalMapSiteJson.get(siteId) ||
+    ({
+      siteId: siteId,
+      name: 'SITE ERROR',
+      address: '',
+      //  watchStrArr: [],
+      watchPlan: [],
+    } as ISiteJson)
+  );
+}
+export function globalGuard(guardId: number): IGuardJson {
+  return (
+    globalMapGuardJson.get(guardId) ||
+    ({
+      guardId: guardId,
+      manager: '--',
+      name: 'GUARD ERROR',
+      background: 'red',
+      textColor: 'white',
+    } as IGuardJson)
+  );
+}
 export const Globals = new CGlobals();
 
 @Injectable({
@@ -117,35 +107,7 @@ export class DalService {
   get endDate(): Date {
     return this._endDate;
   }
-  readonly mapSiteJson: Map<number, ISiteJson> = new Map<number, ISiteJson>();
-  readonly mapGuardJson: Map<number, IGuardJson> = new Map<
-    number,
-    IGuardJson
-  >();
-  getSite(siteId: number): ISiteJson {
-    return (
-      this.mapSiteJson.get(siteId) ||
-      ({
-        siteId: siteId,
-        name: 'SITE ERROR',
-        address: '',
-        //  watchStrArr: [],
-        watchPlan: [],
-      } as ISiteJson)
-    );
-  }
-  getGuard(guardId: number): IGuardJson {
-    return (
-      this.mapGuardJson.get(guardId) ||
-      ({
-        guardId: guardId,
-        manager: '--',
-        name: 'GUARD ERROR',
-        background: 'red',
-        textColor: 'white',
-      } as IGuardJson)
-    );
-  }
+  
   private iSites: ISiteJson[] = []; //MokSitesJSon;
   private iGuards: IGuardJson[] = []; //MOKGuardsJSon;
   public Direction: string = 'ltr';
@@ -177,9 +139,8 @@ export class DalService {
       localStorage?.setItem(prefix + '_iGuards', JSON.stringify(this.iGuards));
     }
 
-    this.mapGuardJson.clear();
-    this.iGuards.forEach((g) => this.mapGuardJson.set(g.guardId, g));
-   
+   globalMapGuardJson.clear();
+    this.iGuards.forEach((g) =>globalMapGuardJson.set(g.guardId, g));
   }
   private retriveSites() {
     const iSiteStr = localStorage?.getItem(prefix + '_iSites');
@@ -190,8 +151,8 @@ export class DalService {
       this.iSites = MokSitesJSon;
       localStorage?.setItem(prefix + '_iSites', JSON.stringify(this.iSites));
     }
-    this.mapSiteJson.clear();
-    this.iSites.forEach((g) => this.mapSiteJson.set(g.siteId, g));
+    globalMapSiteJson.clear();
+    this.iSites.forEach((g) => globalMapSiteJson.set(g.siteId, g));
 
     // throw new Error('Method not implemented.');
   }

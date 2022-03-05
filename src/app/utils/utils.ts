@@ -7,6 +7,7 @@ export const MS_IN_DAY = MS_IN_HOUR * 24;
 export const MS_IN_WEEK = MS_IN_DAY * 7;
 
 export enum DayPart {
+  AllDay = 0,
   Morning = 1,
   Noon = 2,
   Night = 3,
@@ -24,22 +25,26 @@ export const HEB_DAYS = [
 export function getMidnight(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth() , date.getDate());
 }
-export function dateToId(date: Date, siteId: number = 0): number {
-  return msToId(date.getTime(), siteId);
-}
-export function msToId(ms: number, siteId: number = 0): number {
-  let ret = (((ms - BeginMs2022) / MS_IN_H5) | 0) * 10000 
-  ret += (siteId % 1000) * 10;
-  
+export function msToIdw(midMs: number, begH: number, siteId: number): number {
+  let ret = <number>getDayPartH(begH);
+  ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10;
+  ret += (siteId % 1000) * 100000;
   return ret;
 }
-export function h5ToMS(h5: number): number {
-    return  BeginMs2022  + (h5 / 1000) * MS_IN_H5;// h5 ((ms - BeginMs2022) / MS_IN_H5) | 0;
-  }
-export function h5ToDate(h5: number): {date:Date,siteId:number} {
-    const ms = BeginMs2022 + (h5 / 1000) * MS_IN_H5; ;// h5 ((ms - BeginMs2022) / MS_IN_H5) | 0;
-    return {date:new Date(ms),siteId:h5 % 1000};
-}
+
+// export function msToIdw(msMidnight :number, begH : number, siteId: number = 0): number {
+//   let ret = <number>getDayPartH(begH)+
+//   (((msMidnight - BeginMs2022) / MS_IN_DAY) | 0) * 10;
+//   ret += (siteId % 1000) * 100000;
+//   return ret;
+// }
+// export function h5ToMS(h5: number): number {
+//     return  BeginMs2022  + (h5 / 1000) * MS_IN_H5;// h5 ((ms - BeginMs2022) / MS_IN_H5) | 0;
+//   }
+// export function h5ToDate(h5: number): {date:Date,siteId:number} {
+//     const ms = BeginMs2022 + (h5 / 1000) * MS_IN_H5; ;// h5 ((ms - BeginMs2022) / MS_IN_H5) | 0;
+//     return {date:new Date(ms),siteId:h5 % 1000};
+// }
 export function getHebMonthName(date: Date): string {
   const options: Intl.DateTimeFormatOptions = { month: 'long' };
   return new Intl.DateTimeFormat('he-IL', options).format(date);
@@ -70,7 +75,10 @@ export function dateToHours(date: Date): string {
 }
 
 export function getDayPart(date: Date): DayPart {
-  const hr = date.getHours();
+  return getDayPartH(hr);
+}
+export function getDayPartH(hr: number): DayPart {
+
   if (hr < 10) return DayPart.Morning; //SkyBlue
   if (hr < 17) return DayPart.Noon; //Sun;
   return DayPart.Night;
