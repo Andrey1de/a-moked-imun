@@ -3,6 +3,7 @@ import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
+import { IWatch } from '../interfaces/iwatch';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
 const prefix: string = 'AMokedImunGlobals';
 
@@ -155,5 +156,9 @@ export class DalService {
     this.iSites.forEach((g) => globalMapSiteJson.set(g.siteId, g));
 
     // throw new Error('Method not implemented.');
+  }
+  retrieveWatches(firstMIdStr: string, nDays: number) : IWatch[]{
+      return [];
+
   }
 }

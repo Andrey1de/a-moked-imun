@@ -1,5 +1,5 @@
 import { IWatch } from '../interfaces/iwatch';
-import { BeginMs2022, DayPart, MS_IN_DAY } from '../utils/utils';
+import { BeginMs2022, DayPart, getDayPartH, getMidnight, midMsToN2022, MS_IN_DAY } from '../utils/utils';
 import { WatchCell } from './watch-cell';
 
 export class SiteWatchesRow {
@@ -19,11 +19,13 @@ export class SiteWatchesRow {
     this.watches = new Array(this.nDays).fill(undefined);
   }
 
-  setWatch(iw: IWatch) {
-    if (iw.idw % 10 === this.dayPart) {
-      const nDay = ((iw.idw / 10) % 10000) - this.firstDay;
+  setWatch(iWatch: IWatch) {
+    const _dayPart = getDayPartH(iWatch.beginH);
+   // const _midNightMS = new Date(iWatch.midnight);
+    if (_dayPart === this.dayPart) {
+      const nDay = midMsToN2022(iWatch.date.getMilliseconds()) - this.firstDay;
       if (nDay >= 0 && nDay < this.nDays) {
-        this.watches[nDay] = new WatchCell(iw);
+        this.watches[nDay] = new WatchCell(iWatch);
         this._nSet++;
       }
     }
@@ -32,7 +34,7 @@ export class SiteWatchesRow {
 export class SiteWatchesRow3 {
   readonly morning!: SiteWatchesRow;
   readonly noon!: SiteWatchesRow;
-  readonly night!: SiteWatchesRow;
+  readonly evening!: SiteWatchesRow;
   readonly firstDay: number;
   constructor(
     readonly siteId: number,
@@ -40,38 +42,28 @@ export class SiteWatchesRow3 {
     public nDays: number = 7
   ) {
     const midMs = this.firstDate.getTime();
-    this.firstDay = (midMs - BeginMs2022) / MS_IN_DAY;
+    this.firstDay = midMsToN2022(midMs);
     this.morning = new SiteWatchesRow(
-      DayPart.Morning,
-      siteId,
-      this.firstDay,
-      this.nDays
-    );
+      DayPart.Morning,siteId, this.firstDay,this.nDays);
 
     this.noon = new SiteWatchesRow(
-      DayPart.Noon,
-      siteId,
-      this.firstDay,
-      this.nDays
-    );
+      DayPart.Noon,siteId,this.firstDay,this.nDays);
 
     this.noon = new SiteWatchesRow(
-      DayPart.Night,
-      siteId,
-      this.firstDay,
-      this.nDays
-    );
+      DayPart.Evening,siteId,this.firstDay,this.nDays);
   }
   setWatch(iw: IWatch) {
-    switch (iw.idw % 10) {
+    const dayPart : DayPart = getDayPartH(iw.beginH);
+    switch (dayPart) {
       case DayPart.Morning:
         this.morning.setWatch(iw);
         break;
       case DayPart.Noon:
         this.noon.setWatch(iw);
         break;
-      case DayPart.Night:
-        this.night.setWatch(iw);
+      case DayPart.Night://?????????????????
+      case DayPart.Evening:
+        this.evening.setWatch(iw);
         break;
 
       default:

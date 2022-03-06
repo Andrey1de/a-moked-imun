@@ -1,27 +1,35 @@
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
-import { DayPart } from '../utils/utils';
+import { DayPart, getDayPartH } from '../utils/utils';
 import { globalGuard, Globals, globalSite } from './dal.service';
 
 
 export class WatchCell {
- 
   readonly siteId!: number;
   readonly midnight!: string;
-  readonly dayPart : DayPart;
+  readonly dayPart!: DayPart;
   private _guardId!: number; //this.int.guardId;
-  public get guardId(): number {
-    return this._guardId;
-  }
   isDirty: boolean = false;
   private _Guard: IGuardJson;
   readonly _Site: ISiteJson;
+  readonly lengthH: number;
+  readonly begStr: string = '';
+  readonly endStr: string = '';
+
+  guardName: string = '';
+  guardBack: string = 'white';
+  guardColor: string = 'black';
+  guardAddress: string = '';
+  public get guardId(): number {
+    return this._guardId;
+  }
 
   constructor(readonly iWatch: IWatch) {
     this.siteId = this.iWatch.siteId;
     this.guardId = this.iWatch.guardId;
-    this.dayPart = this.iWatch.idw % 10;
+    this.lengthH = iWatch.lengthH;
+    this.dayPart = getDayPartH(iWatch.beginH);
     this._Site = globalSite(this.siteId);
     this._Guard = globalGuard(this.guardId);
   }
@@ -30,6 +38,12 @@ export class WatchCell {
     this.isDirty = true;
     this._guardId = grd;
     this._Guard = globalGuard(this._guardId);
+    if (this._Guard) {
+      this.guardName = this._Guard.name;
+      this.guardBack = this._Guard.background;
+      this.guardColor = this._Guard.textColor;
+      this.guardAddress = this._Guard?.address || '';
+    }
   }
 
   private _dirty: boolean = false;

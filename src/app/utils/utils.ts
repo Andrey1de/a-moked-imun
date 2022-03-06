@@ -7,10 +7,10 @@ export const MS_IN_DAY = MS_IN_HOUR * 24;
 export const MS_IN_WEEK = MS_IN_DAY * 7;
 
 export enum DayPart {
-  AllDay = 0,
+  Night = 0,
   Morning = 1,
   Noon = 2,
-  Night = 3,
+  Evening = 3,
 }
 
 export const HEB_DAYS = [
@@ -23,14 +23,26 @@ export const HEB_DAYS = [
   'שבת',
 ];
 export function getMidnight(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth() , date.getDate());
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
-export function msToIdw(midMs: number, begH: number, siteId: number): number {
-  let ret = <number>getDayPartH(begH);
-  ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10;
-  ret += (siteId % 1000) * 100000;
+export function getDayPart(date: Date): DayPart {
+  return getDayPartH(date.getHours());
+}
+export function getDayPartH(hr: number): DayPart {
+  return <DayPart>((hr / 6)|0);
+}
+
+export function  midMsToN2022(midMs: number){
+    return (((midMs - BeginMs2022) / MS_IN_DAY) | 0);
+}   
+export function msToIdw(midMs: number, 
+                        begH: number, 
+                        siteId: number): number {
+  let ret = (siteId % 1000)+ (<number>getDayPartH(begH) * 1000) ;
+  ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10000;
   return ret;
 }
+
 
 // export function msToIdw(msMidnight :number, begH : number, siteId: number = 0): number {
 //   let ret = <number>getDayPartH(begH)+
@@ -74,15 +86,6 @@ export function dateToHours(date: Date): string {
   return str;
 }
 
-export function getDayPart(date: Date): DayPart {
-  return getDayPartH(hr);
-}
-export function getDayPartH(hr: number): DayPart {
-
-  if (hr < 10) return DayPart.Morning; //SkyBlue
-  if (hr < 17) return DayPart.Noon; //Sun;
-  return DayPart.Night;
-}
 
 export function addDays(date: Date, nDays: number): Date {
   return new Date(date.getTime() + nDays * MS_IN_DAY);

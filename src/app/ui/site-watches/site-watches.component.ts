@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DalService } from 'src/app/services/dal.service';
 
 @Component({
   selector: 'app-site-watches',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export  class SiteWatchesComponent implements OnInit {
 
-  constructor() { }
+  constructor(readonly dal: DalService) { }
 
   ngOnInit(): void {
   }
