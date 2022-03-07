@@ -1,3 +1,5 @@
+import { IWatch } from "../interfaces/iwatch";
+
 export const Begin2022 = new Date('2022-01-01 00:00');
 export const BeginMs2022 = Begin2022.getTime();
 
@@ -28,21 +30,28 @@ export function getMidnight(date: Date): Date {
 export function getDayPart(date: Date): DayPart {
   return getDayPartH(date.getHours());
 }
-export function getDayPartH(hr: number): DayPart {
-  return <DayPart>((hr / 6)|0);
-}
-
 export function  midMsToN2022(midMs: number){
     return (((midMs - BeginMs2022) / MS_IN_DAY) | 0);
 }   
 export function msToIdw(midMs: number, 
                         begH: number, 
                         siteId: number): number {
-  let ret = (siteId % 1000)+ (<number>getDayPartH(begH) * 1000) ;
+  let ret = (siteId % 1000) + ((begH / 6) | 0) * 1000; ;
   ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10000;
   return ret;
 }
+export function getDayPartH(hr: number): number {
+  return ((hr / 6) | 0);
+}
 
+ export function correctIWatch(iw: IWatch) {
+   if (!!iw.idw && !!iw.date) {
+     return iw;
+   }
+   const _date = new Date(iw.midnight);
+   const _idhw = msToIdw(_date.getTime(), iw.beginH, iw.siteId);
+   return { ...iw, idw: _idhw, date: _date };
+ }
 
 // export function msToIdw(msMidnight :number, begH : number, siteId: number = 0): number {
 //   let ret = <number>getDayPartH(begH)+

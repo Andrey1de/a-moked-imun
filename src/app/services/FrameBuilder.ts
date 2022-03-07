@@ -8,32 +8,52 @@ import {
   msToIdw,
   midMsToN2022,
   MS_IN_DAY,
+  correctIWatch,
 } from '../utils/utils';
 import { globalAllSites, Globals } from './dal.service';
 
 export class FrameBuilder {
   readonly axis!: IDayAxis[];
   readonly iSites: ISiteJson[];
-  readonly firstDate: Date;
+  readonly firstMidStr!: string;
   readonly firstDayMs: number;
   readonly mapSites: Map<number, Map<number, IWatch>> = new Map<
-    number,
-    Map<number, IWatch>
-  >();
-  readonly mapWatchesDal: Map<number, IWatch> = 
-    new Map<number, IWatch>();
+    number, Map<number, IWatch>>();
+  //readonly mapWatchesDal: Map<number, IWatch> = new Map<number, IWatch>();
 
-  constructor(readonly firstMidStr: string,
-    public nDays: number,
-     watchesDal: IWatch[]
+  constructor(
+    readonly firstDate: Date,
+    public nDays: number
   ) {
     this.axis = new Array<IDayAxis>(7);
-    this.firstDate = new Date(firstMidStr);
+    this.firstMidStr = dateToString(firstDate);
+    this.firstDate = new Date(this.firstMidStr);
     this.firstDayMs = this.firstDate.getTime();
     this.createAxis();
     this.iSites = globalAllSites();
     this.createAllTheFrame();
-    watchesDal.forEach((w) => this.mapWatchesDal.set(w.idw,w));
+   // watchesDal.forEach((w) => this.mapWatchesDal.set(w.idw, w));
+  }
+
+  public mergeFrame( watchesDal: IWatch[]){
+   // const map: Map<number, IWatch> = new Map<number, IWatch>();
+    watchesDal.forEach(iw=>
+       this.setWatch(correctIWatch(iw))
+    );
+  }
+
+  public setWatch(iWatch:IWatch){
+    const _siteId =iWatch.siteId;
+    let map = this.mapSites.get(_siteId);
+    if(!map){
+        map = new Map<number, IWatch>();
+        this.mapSites.set(_siteId, map);
+    }
+    map.set(iWatch.idw,iWatch);   
+  }
+  public getWatch(idw:number){
+      const _siteId = (idw % 1000) | 0;
+      return this.mapSites.get(_siteId)?.get(idw);
   }
 
   private createAxis() {
@@ -65,8 +85,8 @@ export class FrameBuilder {
     }
   }
   private createAllTheFrame(): Map<number, Map<number, IWatch>> {
-    for (let index = 0; index < this.iSites.length; index++) {
-      const iSite = this.iSites[index];
+    for (const iSite of this.iSites) {
+   
       const map: Map<number, IWatch> = this.createFrameSiteWatches(iSite);
       this.mapSites.set(iSite.siteId, map);
     }
@@ -115,14 +135,14 @@ export class FrameBuilder {
           midnight: axe.midStr,
           beginH: _begH, // new Date(beginS * 1000) from 2022-01-01
           lengthH: _lengthH,
-          date: new Date(midnight)
+          date: axe.midDate
         } as IWatch;
 
         arr.push(watch);
       });
     }
     arr = arr.sort((a, b) => a.idw - b.idw);
-    arr.forEach((watch) => _mapSite.set(watch.idw, watch));
+    arr.forEach((watch, index) => _mapSite.set(watch.idw, watch));
     return _mapSite;
   }
 }

@@ -11,17 +11,13 @@ import { FrameBuilder } from './services/FrameBuilder';
 })
 export class AppComponent implements OnInit {
   public mapSites!: Map<number, Map<number, IWatch>>;
-  public axis!: IDayAxis[];
-  firstMidStr: string = '2022-02-27';
-  nDays: number = Globals.nDays;
+  //public fb?: FrameBuilder;
+ // public axis!: IDayAxis[];
+  //firstMidStr: string = '2022-02-27';
+ // nDays: number = Globals.nDays;
+ // isFrame: boolean = false;
 
   constructor(readonly dal: DalService) {}
   ngOnInit(): void {}
 
-  generateFrame() {
-    const iWatches = this.dal.retrieveWatches(this.firstMidStr, this.nDays);
-    const fb = new FrameBuilder(this.firstMidStr, this.nDays, iWatches);
-    this.mapSites = fb.mapSites;
-    this.axis = fb.axis;
-  }
 }

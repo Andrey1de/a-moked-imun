@@ -5,6 +5,7 @@ import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
+import { FrameBuilder } from './FrameBuilder';
 const prefix: string = 'AMokedImunGlobals';
 
 class CGlobals {
@@ -57,10 +58,11 @@ class CGlobals {
     CGlobals._beginDate = date;
   }
 }
-const globalMapSiteJson: Map<number, ISiteJson> = 
-              new Map<number, ISiteJson>();
-const globalMapGuardJson: Map<number, IGuardJson> = 
-              new Map<number,IGuardJson>();
+const globalMapSiteJson: Map<number, ISiteJson> = new Map<number, ISiteJson>();
+const globalMapGuardJson: Map<number, IGuardJson> = new Map<
+  number,
+  IGuardJson
+>();
 export function globalAllSites(): ISiteJson[] {
   return [...globalMapSiteJson.values()];
 }
@@ -108,10 +110,14 @@ export class DalService {
   get endDate(): Date {
     return this._endDate;
   }
-  
+
   private iSites: ISiteJson[] = []; //MokSitesJSon;
   private iGuards: IGuardJson[] = []; //MOKGuardsJSon;
   public Direction: string = 'ltr';
+  private _fb!: FrameBuilder;
+  get fb() {
+    return this._fb;
+  }
 
   constructor() {}
   init() {
@@ -140,8 +146,8 @@ export class DalService {
       localStorage?.setItem(prefix + '_iGuards', JSON.stringify(this.iGuards));
     }
 
-   globalMapGuardJson.clear();
-    this.iGuards.forEach((g) =>globalMapGuardJson.set(g.guardId, g));
+    globalMapGuardJson.clear();
+    this.iGuards.forEach((g) => globalMapGuardJson.set(g.guardId, g));
   }
   private retriveSites() {
     const iSiteStr = localStorage?.getItem(prefix + '_iSites');
@@ -157,8 +163,19 @@ export class DalService {
 
     // throw new Error('Method not implemented.');
   }
-  retrieveWatches(firstMIdStr: string, nDays: number) : IWatch[]{
-      return [];
-
+  async generateFrame(
+    firstMIdStr: string,
+    nDays: number
+  ): Promise<FrameBuilder | undefined> {
+    try {
+      this.toInit();
+      Globals.beginDate = getMidnight(new Date(firstMIdStr));
+      Globals.nDays = nDays;
+      //??? get IWatches from DB
+      this._fb = new FrameBuilder(this.beginDate, this.nDays);
+      return this._fb;
+    } catch (error) {
+      return undefined;
+    }
   }
 }
