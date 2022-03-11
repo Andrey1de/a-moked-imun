@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {}
 
   async toGenerateFrame() {
-    const fb = await this.dal.generateFrame(this.firstMidStr, this.nDays); //new FrameBuilder(new Date(this.firstMidStr), this.nDays, []);
+         const fb = await this.dal.generateFrame(this.firstMidStr, this.nDays); //new FrameBuilder(new Date(this.firstMidStr), this.nDays, []);
     this.isFrame = !!fb;
   }
 }

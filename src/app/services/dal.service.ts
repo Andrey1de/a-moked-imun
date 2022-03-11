@@ -173,6 +173,7 @@ export class DalService {
       Globals.nDays = nDays;
       //??? get IWatches from DB
       this._fb = new FrameBuilder(this.beginDate, this.nDays);
+      debugger;
       return this._fb;
     } catch (error) {
       return undefined;

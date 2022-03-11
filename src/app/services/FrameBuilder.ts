@@ -2,29 +2,40 @@ import { IDayAxis } from '../interfaces/iday-axis.model';
 import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
 import {
-  dateToString,
-  dateToTimeString,
   HEB_DAYS,
   msToIdw,
   midMsToN2022,
+ 
   MS_IN_DAY,
-  correctIWatch,
+  idwParts,
+  DayPart,
+  dateToTimeString,
+  dateToString,
 } from '../utils/utils';
-import { globalAllSites, Globals } from './dal.service';
-
+import { globalAllSites, Globals, globalSite } from './dal.service';
+import { WatchRow } from './watch-row';
 export class FrameBuilder {
   readonly axis!: IDayAxis[];
-  readonly iSites: ISiteJson[];
+  readonly iSites: ISiteJson[] = [];
   readonly firstMidStr!: string;
   readonly firstDayMs: number;
-  readonly mapSites: Map<number, Map<number, IWatch>> = new Map<
-    number, Map<number, IWatch>>();
+  readonly firstDay2022!: number;
+  readonly lasttDay2022!: number;
+  readonly mapMorning: Map<number, WatchRow> = new Map<number, WatchRow>();
+  readonly mapNoon: Map<number, WatchRow> = new Map<number, WatchRow>();
+  readonly mapEvening: Map<number, WatchRow> = new Map<number, WatchRow>();
+  readonly mapSites: Map<number, WatchRow>[] = [
+    this.mapMorning,
+    this.mapNoon,
+    this.mapEvening,
+  ];
+
+  // siteId      idw
+
   //readonly mapWatchesDal: Map<number, IWatch> = new Map<number, IWatch>();
 
-  constructor(
-    readonly firstDate: Date,
-    public nDays: number
-  ) {
+  constructor(readonly firstDate: Date, public nDays: number) {
+    debugger;
     this.axis = new Array<IDayAxis>(7);
     this.firstMidStr = dateToString(firstDate);
     this.firstDate = new Date(this.firstMidStr);
@@ -32,28 +43,7 @@ export class FrameBuilder {
     this.createAxis();
     this.iSites = globalAllSites();
     this.createAllTheFrame();
-   // watchesDal.forEach((w) => this.mapWatchesDal.set(w.idw, w));
-  }
-
-  public mergeFrame( watchesDal: IWatch[]){
-   // const map: Map<number, IWatch> = new Map<number, IWatch>();
-    watchesDal.forEach(iw=>
-       this.setWatch(correctIWatch(iw))
-    );
-  }
-
-  public setWatch(iWatch:IWatch){
-    const _siteId =iWatch.siteId;
-    let map = this.mapSites.get(_siteId);
-    if(!map){
-        map = new Map<number, IWatch>();
-        this.mapSites.set(_siteId, map);
-    }
-    map.set(iWatch.idw,iWatch);   
-  }
-  public getWatch(idw:number){
-      const _siteId = (idw % 1000) | 0;
-      return this.mapSites.get(_siteId)?.get(idw);
+    // watchesDal.forEach((w) => this.mapWatchesDal.set(w.idw, w));
   }
 
   private createAxis() {
@@ -84,32 +74,25 @@ export class FrameBuilder {
       this.axis[nDay] = axe;
     }
   }
-  private createAllTheFrame(): Map<number, Map<number, IWatch>> {
+  private createAllTheFrame() {
     for (const iSite of this.iSites) {
-   
-      const map: Map<number, IWatch> = this.createFrameSiteWatches(iSite);
-      this.mapSites.set(iSite.siteId, map);
+      this.createFrameSiteWatches(iSite);
     }
     return this.mapSites;
   }
   //ssssnnnnp = site-numday2022-partofday 200321 - 2site 2022-02-01 I duty
 
-  private createFrameSiteWatches(iSite: ISiteJson): Map<number, IWatch> {
-    let arr: IWatch[] = [];
-    let midnight = this.firstDate;
-    let _mapSite = new Map<number, IWatch>();
-    this.mapSites.set(iSite.siteId, _mapSite);
+  private createFrameSiteWatches(iSiteJson: ISiteJson) {
+    // let _mapSite = new Map<number, IWatch>();
+    //  this.mapSites.set(iSite.siteId, _mapSite);
     const nDays = this.nDays;
 
     // watchPlan: number[];[7][[beg.end]]
 
-    const watchPlan: number[][][] = iSite.watchPlan;
+    const watchPlan: number[][][] = iSiteJson.watchPlan;
     if (!Array.isArray(watchPlan) || watchPlan.length !== 7) {
-      return _mapSite;
+      return this.mapSites;
     }
-
-    let midnightMs = midnight.getTime();
-    const midnightStr = dateToString(midnight);
 
     // const siteId = iSite.siteId;
 
@@ -124,25 +107,75 @@ export class FrameBuilder {
         const [_begH, _endH] = pair;
         const _lengthH = (24 + _endH - _begH) % 24;
 
-        const _siteId = iSite.siteId;
+        const _siteId = iSiteJson.siteId;
         // const _begMS = midnight.getTime() + begH * MS_IN_HOUR;
         // dddd-p-sss(dayN,part,site)
         const _idhw = msToIdw(axe.midMs, _begH, _siteId);
-        let watch = {
+        let iwatch = {
           idw: _idhw,
           siteId: _siteId, // "2";
           guardId: 0, // "101";
           midnight: axe.midStr,
           beginH: _begH, // new Date(beginS * 1000) from 2022-01-01
           lengthH: _lengthH,
-          date: axe.midDate
+          date: axe.midDate,
         } as IWatch;
 
-        arr.push(watch);
+        this.setWatch(iwatch, iSiteJson);
       });
     }
-    arr = arr.sort((a, b) => a.idw - b.idw);
-    arr.forEach((watch, index) => _mapSite.set(watch.idw, watch));
-    return _mapSite;
+    // arr = arr.sort((a, b) => a.idw - b.idw);
+    // arr.forEach((watch, index) => _mapSite.set(watch.idw, watch));
+    // return _mapSite;
+    return this.mapSites;
+  }
+  public setWatch(iw: IWatch, iSiteJson : ISiteJson): boolean {
+      iSiteJson = iSiteJson || globalSite(iw.siteId);
+    const { siteId, n2022, dayPart } = idwParts(iw.idw);
+    let row: Map<number, WatchRow>; //= this.mapMorning;
+    switch (dayPart) {
+      case DayPart.Morning:
+        row = this.mapMorning;
+        break;
+      case DayPart.Noon:
+        row = this.mapNoon;
+        break;
+      case DayPart.Evening:
+        row = this.mapEvening;
+        break;
+
+      default:
+        return false;
+    }
+
+    let watchRow = row.get(siteId);
+    if (!watchRow) {
+      watchRow = new WatchRow(iSiteJson, dayPart, this.nDays, this.firstDate);
+      watchRow.isFirst = true;
+      row.set(siteId, watchRow);
+    }
+    watchRow.setWatch(iw);
+    return true;
   }
 }
+
+
+
+  //   public mergeFrame(watchesDal: IWatch[]) {
+  //     // const map: Map<number, IWatch> = new Map<number, IWatch>();
+  //     watchesDal.forEach((iw) => this.setWatch(correctIWatch(iw)));
+  //   }
+
+  //   public setWatch(iWatch: IWatch) {
+  //     const _siteId = iWatch.siteId;
+  //     let map = this.mapSites.get(_siteId);
+  //     if (!map) {
+  //       map = new Map<number, IWatch>();
+  //       this.mapSites.set(_siteId, map);
+  //     }
+  //     map.set(iWatch.idw, iWatch);
+  //   }
+  //   public getWatch(idw: number) {
+  //     const _siteId = idw % 1000 | 0;
+  //     return this.mapSites.get(_siteId)?.get(idw);
+  //   }

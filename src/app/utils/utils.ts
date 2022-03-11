@@ -30,20 +30,27 @@ export function getMidnight(date: Date): Date {
 export function getDayPart(date: Date): DayPart {
   return getDayPartH(date.getHours());
 }
-export function  midMsToN2022(midMs: number){
-    return (((midMs - BeginMs2022) / MS_IN_DAY) | 0);
-}   
-export function msToIdw(midMs: number, 
-                        begH: number, 
-                        siteId: number): number {
-  let ret = (siteId % 1000) + ((begH / 6) | 0) * 1000; ;
+export function dateToN2022(date: Date) {
+  return midMsToN2022(date.getTime());
+}
+export function midMsToN2022(midMs: number) {
+  return ((midMs - BeginMs2022) / MS_IN_DAY) | 0;
+}
+export function msToIdw(midMs: number, begH: number, siteId: number): number {
+  let ret = (siteId % 1000) + ((begH / 6) | 0) * 1000;
   ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10000;
   return ret;
 }
 export function getDayPartH(hr: number): number {
-  return ((hr / 6) | 0);
+  return (hr / 6) | 0;
 }
-
+export function idwParts(idw: number) {
+  return {
+      siteId:  ( idw % 1000 | 0),
+      n2022 : (idw / 10000) | 0, 
+      dayPart: ((idw / 1000) % 10|0)
+    }
+}
  export function correctIWatch(iw: IWatch) {
    if (!!iw.idw && !!iw.date) {
      return iw;
@@ -71,20 +78,13 @@ export function getHebMonthName(date: Date): string {
   return new Intl.DateTimeFormat('he-IL', options).format(date);
 }
 
-export function dateToString(date: Date, isTime: boolean = false): string {
-  let str = `${p2(date.getFullYear())}-${p2(date.getMonth() + 1)}-${p2(
-    date.getDate()
-  )}`;
-  if (isTime) {
-    //|| date.getHours() != 0 || date.getMinutes() != 0) {
-    str += ` .${dateToTimeString(date)}`;
-  }
-  return str;
+export function getEngMonthName(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = { month: 'long' };
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 }
 
-export function dateToTimeString(date: Date) {
-  return `${p2(date.getHours())}:${p2(date.getMinutes())}`;
-}
+
+
 export function dateToHours(date: Date): string {
   let min = date.getMinutes();
   let str: string =
@@ -102,7 +102,19 @@ export function addDays(date: Date, nDays: number): Date {
 export function addHours(date: Date, nHours: number): Date {
   return new Date(date.getTime() + nHours * MS_IN_HOUR);
 }
-
+export function dateToString(date: Date, isTime: boolean = false): string {
+  let str = `${p2(date.getFullYear())}-${p2(date.getMonth() + 1)}-${p2(
+    date.getDate()
+  )}`;
+  if (isTime) {
+    //|| date.getHours() != 0 || date.getMinutes() != 0) {
+    str += ` .${dateToTimeString(date)}`;
+  }
+  return str;
+}
+export function dateToTimeString(date: Date) {
+  return `${p2(date.getHours())}:${p2(date.getMinutes())}`;
+}
 function p2(p: number): string {
   const str: string = p.toString();
   return str.length < 2 ? '0' + str : str;

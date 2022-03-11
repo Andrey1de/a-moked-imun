@@ -10,14 +10,18 @@ import { FrameBuilder } from './services/FrameBuilder';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  public mapSites!: Map<number, Map<number, IWatch>>;
+  //public mapSites!: Map<number, Map<number, IWatch>>;
   //public fb?: FrameBuilder;
  // public axis!: IDayAxis[];
   //firstMidStr: string = '2022-02-27';
  // nDays: number = Globals.nDays;
  // isFrame: boolean = false;
 
-  constructor(readonly dal: DalService) {}
+  constructor(readonly dal: DalService) {
+        Globals.nDays = 7;
+        Globals.beginDate = new Date('2022-06-03');
+        
+  }
   ngOnInit(): void {}
 
 }
