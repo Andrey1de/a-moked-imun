@@ -16,19 +16,22 @@ export enum DayPart {
 }
 
 export const HEB_DAYS = [
-  'א' + "'",
-  'ב' + "'",
-  'ג' + "'",
-  'ד' + "'",
-  'ה' + "'",
-  'ו' + "'",
-  'שבת',
+  "\'א",
+  "\'ב",
+  "\'ג",
+  "\'ד",
+  "\'ה",
+  "\'ו",
+  "שבת",
 ];
 export function getMidnight(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 export function getDayPart(date: Date): DayPart {
   return getDayPartH(date.getHours());
+}
+export function getDayPartH(hr: number): number {
+  return (hr / 6) | 0;
 }
 export function dateToN2022(date: Date) {
   return midMsToN2022(date.getTime());
@@ -41,9 +44,7 @@ export function msToIdw(midMs: number, begH: number, siteId: number): number {
   ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10000;
   return ret;
 }
-export function getDayPartH(hr: number): number {
-  return (hr / 6) | 0;
-}
+
 export function idwParts(idw: number) {
   return {
       siteId:  ( idw % 1000 | 0),

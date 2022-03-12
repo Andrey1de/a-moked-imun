@@ -1,0 +1,115 @@
+$header-background-color: #BDBDBD;
+$header-border: solid white;
+$header-height: 2.0rem;
+$event-height: 50%;
+$title-row-width: 10rem;
+$title-colum-background: #f5f5f5;
+$font-caption-size: 1.2rem;
+$font-event-size: 1.4rem;
+$font-s-tooltip-size: 1.0rem;
+$border: 1px solid #c8c8c8;
+$free-border : 2px dotted red;
+$alternate-row-background-color: #f8f8f0;
+$border-radius : 16px;
+$grid-width: 1px;
+
+$grid-border : 1px solid #c8c8c8;
+.row .col{
+    width: 100%;
+    height: 100%;
+    margin : 0;
+
+}
+
+.s-tooltip{
+    opacity: 1.0;
+}
+
+.s-container {
+    min-width: 600px;
+            
+    table {
+
+        border-collapse: separate;
+        width:100%;
+        text-indent: initial;
+        border-spacing: 0;
+        th, td {
+            border: $border;
+            padding:0;
+            text-align: center;
+            background-color: $title-colum-background;
+
+            height: $header-height;
+        }
+
+
+        .row-title {
+            width: $title-row-width;
+            font-weight: bold;
+            font-size: $font-caption-size;
+            text-align: right;
+            padding: 1rem;
+            background-color: $title-colum-background;
+        }
+
+        .row-watches {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,1.0);
+            margin: auto;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+                
+            .watch-event{
+                height: $event-height;
+                border-radius: $border-radius;
+                font-weight: bold;
+                    text-indent: 8px;;
+
+                font-size: $font-event-size;
+                position: absolute;
+                
+                    //background-color: red;
+                margin-top: 0.8rem;
+                overflow: hidden;
+                .watch-name {
+
+                        vertical-align: top;
+                    
+                }
+
+            }
+            .col{
+               border: $grid-border; 
+               border-top-color: white;
+               border-bottom-color: white;
+            }
+            
+        }
+    }	
+	
+  .s-tooltip:hover .s-tooltip-text {
+    display: block;
+  }
+   
+  .s-tooltip-text {
+    
+    display: none;
+    color: white;
+    position: fixed;
+    z-index: 1000;
+    background: black;
+    font-size: $font-s-tooltip-size;
+    max-width: 10rem;
+    text-align: center;
+    padding: 0.5rem;
+    margin-left: -5px;
+    margin-top: 5px;
+  }
+
+
+
+}

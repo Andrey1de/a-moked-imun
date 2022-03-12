@@ -1,3 +1,68 @@
-<table class="table table-success table-hoover">
-  
-</table>
+
+<div class="s-container"  [style.direction]="direction()">
+    <div>
+    
+    <div>
+        <div class="row">
+           <div class="col">
+                <label for="idfirstMidStr" class="form-label">1st Date</label>
+                <div class="input-group mb-3">
+                    <input type="text"  id="idfirstMidStr" [(ngModel)] = "firstMidStr">
+                </div>
+           </div>
+           <div class="col">
+                <label for="idnDays" class="form-label">N Days</label>
+                <div class="input-group mb-3">
+                    <input type="number"  id="idnDays" [(ngModel)] = "nDays">
+                </div>
+            </div>
+        </div>
+    
+        <button class="btn btn-primary" (click)="toGenerateFrame()">
+                Create Frame</button>
+            <div ><strong> 
+                {{fbString}}
+            </strong>
+        </div>
+    </div>
+
+    <table class="table table-success table-hoover" style="width:100%" [style.direction]="direction()">
+        <thead>
+            <tr>
+                <th class="row-title" scope="col" [style.width]="dayPartWidth +'%'" >
+                    #
+                </th>
+                <th class="row-title" scope="col" [style.width]="titleWidth +'%'" >
+                    {{leftTopTitle}}
+                </th>
+            
+                  <th  class="row-title" *ngFor="let day of dayAxis"
+                        [style.width]="colWidth + '%'" 
+                        [style.textAlign]="'center'"> 
+                        {{day.dayName}}
+                </th>
+            </tr>
+        </thead>
+    </table>    
+</div>
+
+<!--<tbody> 
+    <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Jacob</td>
+      <td>Thornton</td>
+      <td>@fat</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td colspan="2">Larry the Bird</td>
+      <td>@twitter</td>
+    </tr> 
+  </tbody>-->
+

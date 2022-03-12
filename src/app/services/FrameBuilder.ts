@@ -5,15 +5,17 @@ import {
   HEB_DAYS,
   msToIdw,
   midMsToN2022,
- 
   MS_IN_DAY,
   idwParts,
   DayPart,
   dateToTimeString,
   dateToString,
+  correctIWatch,
+  getDayPart,
+  getDayPartH,
 } from '../utils/utils';
 import { globalAllSites, Globals, globalSite } from './dal.service';
-import { WatchRow } from './watch-row';
+import { DayPartRows, WatchRow } from './watch-row';
 export class FrameBuilder {
   readonly axis!: IDayAxis[];
   readonly iSites: ISiteJson[] = [];
@@ -21,25 +23,37 @@ export class FrameBuilder {
   readonly firstDayMs: number;
   readonly firstDay2022!: number;
   readonly lasttDay2022!: number;
-  readonly mapMorning: Map<number, WatchRow> = new Map<number, WatchRow>();
-  readonly mapNoon: Map<number, WatchRow> = new Map<number, WatchRow>();
-  readonly mapEvening: Map<number, WatchRow> = new Map<number, WatchRow>();
-  readonly mapSites: Map<number, WatchRow>[] = [
-    this.mapMorning,
-    this.mapNoon,
-    this.mapEvening,
-  ];
-
+  readonly mapMorning!: DayPartRows; //= new Map<number, WatchRow>();
+  readonly mapNoon!: DayPartRows; // = new Map<number, WatchRow>();
+  readonly mapEvening!: DayPartRows; //= new Map<number, WatchRow>();
+  //   readonly mapSites: DayPartRows[] = [
+  //     this.mapMorning, // 0
+  //     this.mapNoon, //
+  //     this.mapEvening,
+  //   ];
+  //   //
   // siteId      idw
 
   //readonly mapWatchesDal: Map<number, IWatch> = new Map<number, IWatch>();
 
   constructor(readonly firstDate: Date, public nDays: number) {
-    debugger;
+    // debugger;
     this.axis = new Array<IDayAxis>(7);
     this.firstMidStr = dateToString(firstDate);
     this.firstDate = new Date(this.firstMidStr);
     this.firstDayMs = this.firstDate.getTime();
+    this.mapMorning = new DayPartRows(
+      DayPart.Morning,
+      this.nDays,
+      this.firstDate
+    );
+    this.mapNoon = new DayPartRows(DayPart.Noon, this.nDays, this.firstDate);
+    this.mapEvening = new DayPartRows(
+      DayPart.Evening,
+      this.nDays,
+      this.firstDate
+    );
+
     this.createAxis();
     this.iSites = globalAllSites();
     this.createAllTheFrame();
@@ -61,7 +75,7 @@ export class FrameBuilder {
     ) {
       let _dow = _midDate.getDay();
 
-      let _dayName = `${HEB_DAYS[_dow]}' ${_midDate.getDate()}`;
+      let _dayName = `${HEB_DAYS[_dow]}:${_midDate.getDate()}`;
       const axe: IDayAxis = {
         id: nDay,
         dow: _dow,
@@ -78,7 +92,6 @@ export class FrameBuilder {
     for (const iSite of this.iSites) {
       this.createFrameSiteWatches(iSite);
     }
-    return this.mapSites;
   }
   //ssssnnnnp = site-numday2022-partofday 200321 - 2site 2022-02-01 I duty
 
@@ -91,7 +104,7 @@ export class FrameBuilder {
 
     const watchPlan: number[][][] = iSiteJson.watchPlan;
     if (!Array.isArray(watchPlan) || watchPlan.length !== 7) {
-      return this.mapSites;
+      return;
     }
 
     // const siteId = iSite.siteId;
@@ -124,58 +137,65 @@ export class FrameBuilder {
         this.setWatch(iwatch, iSiteJson);
       });
     }
-    // arr = arr.sort((a, b) => a.idw - b.idw);
-    // arr.forEach((watch, index) => _mapSite.set(watch.idw, watch));
-    // return _mapSite;
-    return this.mapSites;
   }
-  public setWatch(iw: IWatch, iSiteJson : ISiteJson): boolean {
-      iSiteJson = iSiteJson || globalSite(iw.siteId);
-    const { siteId, n2022, dayPart } = idwParts(iw.idw);
-    let row: Map<number, WatchRow>; //= this.mapMorning;
+  public setWatch(
+    iw: IWatch,
+    iSiteJson: ISiteJson | undefined = undefined
+  ): boolean {
+    iSiteJson = iSiteJson || globalSite(iw.siteId);
+    //   const { siteId, n2022, dayPart } = idwParts(iw.idw);
+    const dayPart = getDayPartH(iw.beginH);
+    let dayPartRows: DayPartRows; //= this.mapMorning;
     switch (dayPart) {
       case DayPart.Morning:
-        row = this.mapMorning;
+        dayPartRows = this.mapMorning;
         break;
       case DayPart.Noon:
-        row = this.mapNoon;
+        dayPartRows = this.mapNoon;
         break;
       case DayPart.Evening:
-        row = this.mapEvening;
+        dayPartRows = this.mapEvening;
         break;
 
       default:
         return false;
     }
-
-    let watchRow = row.get(siteId);
-    if (!watchRow) {
-      watchRow = new WatchRow(iSiteJson, dayPart, this.nDays, this.firstDate);
-      watchRow.isFirst = true;
-      row.set(siteId, watchRow);
+    try {
+      return dayPartRows.setWatch(iw, iSiteJson);
+    } catch (error) {
+      debugger;
+      console.error(error);
     }
-    watchRow.setWatch(iw);
-    return true;
+
+    return false;
+  }
+  public mergeFrame(watchesDal: IWatch[]) {
+    // const map: Map<number, IWatch> = new Map<number, IWatch>();
+    watchesDal.forEach((iw) => this.setWatch(correctIWatch(iw)));
   }
 }
 
+//   public setWatch(iWatch: IWatch) {
+//     const _siteId = iWatch.siteId;
+//     let map = this.mapSites.get(_siteId);
+//     if (!map) {
+//       map = new Map<number, IWatch>();
+//       this.mapSites.set(_siteId, map);
+//     }
+//     map.set(iWatch.idw, iWatch);
+//   }
+//   public getWatch(idw: number) {
+//     const _siteId = idw % 1000 | 0;
+//     return this.mapSites.get(_siteId)?.get(idw);
+//   }
+// get nRowsMorning() {
+//     return this.mapMorning.size;
+//   }
 
+//   get nRowsNoon() {
+//     return this.mapNoon.size;
+//   }
 
-  //   public mergeFrame(watchesDal: IWatch[]) {
-  //     // const map: Map<number, IWatch> = new Map<number, IWatch>();
-  //     watchesDal.forEach((iw) => this.setWatch(correctIWatch(iw)));
-  //   }
-
-  //   public setWatch(iWatch: IWatch) {
-  //     const _siteId = iWatch.siteId;
-  //     let map = this.mapSites.get(_siteId);
-  //     if (!map) {
-  //       map = new Map<number, IWatch>();
-  //       this.mapSites.set(_siteId, map);
-  //     }
-  //     map.set(iWatch.idw, iWatch);
-  //   }
-  //   public getWatch(idw: number) {
-  //     const _siteId = idw % 1000 | 0;
-  //     return this.mapSites.get(_siteId)?.get(idw);
-  //   }
+//   get nRowsEvening() {
+//     return this.mapEvening.size;
+//   }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { retry } from 'rxjs';
 import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
 import { IGuardJson } from '../interfaces/iguard-json';
@@ -6,21 +7,20 @@ import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
 import { FrameBuilder } from './FrameBuilder';
-const prefix: string = 'AMokedImunGlobals';
 
+const prefix: string = 'a-moked-imun-CGlobals';
 class CGlobals {
   //beginDate: Date = midnight(new Date());
-  readonly prefix: string = 'a-moked-imun-CGlobals';
   static nDays: number = 7;
   readonly isLocal: boolean = !!localStorage;
   init() {
-    if (localStorage) {
-      let beginDate = this.beginDate;
-      this.initNDays();
-    }
+    // if (localStorage) {
+    //   let beginDate = this.beginDate;
+    //   this.initNDays();
+    // }
   }
   initNDays() {
-    let _nDaysStr = localStorage.getItem(this.prefix + '_nDays');
+    let _nDaysStr = localStorage.getItem(prefix + '_nDays');
     if (_nDaysStr) {
       CGlobals.nDays = +_nDaysStr | 0;
     }
@@ -29,11 +29,15 @@ class CGlobals {
 
   private static _nDays: number = 7;
   public get nDays(): number {
-    return CGlobals._nDays;
+    let _nDaysStr =
+      localStorage.getItem(prefix + '_nDays') ;//|| CGlobals.nDays.toString();
+    const n: number = +(_nDaysStr || '0');
+    return n;
   }
   public set nDays(n: number) {
     n = n | 0;
-    localStorage?.setItem(this.prefix + '_beginDate', n.toFixed(0));
+
+    localStorage?.setItem(prefix + '_beginDate', n.toFixed(0));
     CGlobals._nDays = n | 0;
   }
 
@@ -41,9 +45,14 @@ class CGlobals {
 
   static _beginDate: Date = new Date(0);
 
+  public get beginDateStr(): string {
+    let _beginDateStr = '' + localStorage?.getItem(prefix + '_beginDate');
+    return _beginDateStr;
+  }
+
   public get beginDate(): Date {
     if (CGlobals._beginDate.getTime() === 0 && localStorage) {
-      let _beginDateStr = localStorage?.getItem(this.prefix + '_beginDate');
+      let _beginDateStr = this.beginDateStr;
       if (_beginDateStr) {
         CGlobals._beginDate = getMidnight(new Date(_beginDateStr));
       }
@@ -51,10 +60,8 @@ class CGlobals {
     return CGlobals._beginDate;
   }
   public set beginDate(date: Date) {
-    localStorage?.setItem(
-      this.prefix + '_beginDate',
-      dateToString(date, false)
-    );
+    date = getMidnight(date);
+    localStorage?.setItem(prefix + '_beginDate', dateToString(date, false));
     CGlobals._beginDate = date;
   }
 }
@@ -169,13 +176,23 @@ export class DalService {
   ): Promise<FrameBuilder | undefined> {
     try {
       this.toInit();
-      Globals.beginDate = getMidnight(new Date(firstMIdStr));
+      const date = getMidnight(new Date(firstMIdStr));
+      Globals.beginDate = date;
       Globals.nDays = nDays;
+      const fb = this._fb;
+    //   if (!!fb && fb.nDays == this.nDays && fb.firstMidStr == firstMIdStr) {
+    //     debugger;
+    //     return this._fb;
+    //   }
+
+      //debugger;
       //??? get IWatches from DB
-      this._fb = new FrameBuilder(this.beginDate, this.nDays);
-      debugger;
+      this._fb = new FrameBuilder(date, nDays);
+
       return this._fb;
     } catch (error) {
+      debugger;
+      console.error(error);
       return undefined;
     }
   }
