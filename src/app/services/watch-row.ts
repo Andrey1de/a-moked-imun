@@ -15,6 +15,7 @@ export class DayPartRows {
       w.isFirst = idx === 0;
       w.isLast = idx === arr.length - 1;
     });
+  
     return arr;
   }
   readonly name: string = '';

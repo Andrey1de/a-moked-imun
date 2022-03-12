@@ -16,12 +16,12 @@ export enum DayPart {
 }
 
 export const HEB_DAYS = [
-  "\'א",
-  "\'ב",
-  "\'ג",
-  "\'ד",
-  "\'ה",
-  "\'ו",
+  "א\'",
+  "ב\'",
+  "ג\'",
+  "ד\'",
+  "ה\'",
+  "ו\'",
   "שבת",
 ];
 export function getMidnight(date: Date): Date {

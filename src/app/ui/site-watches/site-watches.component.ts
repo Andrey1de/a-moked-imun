@@ -14,12 +14,12 @@ const TITLE_ROW_PERC = 20;
   styleUrls: ['./site-watches.component.scss'],
 })
 export class SiteWatchesComponent implements OnInit, OnDestroy {
-  firstDate: Date = new Date('2022-03-02');
+  firstDate: Date = new Date('2022-02-27');
   nDays: number = 7;
   firstMidStr: string = '';
 
   private fb?: FrameBuilder;
-  readonly leftTopTitle!: string;
+  public leftTopTitle!: string;
 
   readonly dayPartWidth: number = PART_ROW_PERC;
   readonly titleWidth: number = TITLE_ROW_PERC;
@@ -45,11 +45,8 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
     // this.firstDate = getMidnight(Globals.beginDate);
      this.firstMidStr = dateToString(this.firstDate);
     this.colWidth = (100 - this.titleWidth - this.dayPartWidth) / this.nDays;
-    const monthName = this.isHeb
-      ? getHebMonthName(Globals.beginDate)
-      : getEngMonthName(Globals.beginDate);
-
-    this.leftTopTitle = monthName + ' ' + Globals.beginDate.getFullYear();
+   
+    //this.leftTopTitle = monthName + ' ' + Globals.beginDate.getFullYear();
   }
   ngOnDestroy(): void {
      Globals.nDays = this.nDays ;
@@ -57,6 +54,10 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
   
   }
   async ngOnInit() {
+    await this.toGenerateFrame();
+    // this.nDays = Globals.nDays;
+    // this.firstDate = Globals.beginDate;
+    // this.firstMidStr = dateToString(this.firstDate);
     // const fb = await this.dal.generateFrame(this.firstMidStr, this.nDays);
     // if (!!fb) {
     //   this.fb = fb;
@@ -77,7 +78,12 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
         const nMorn = this.fb?.mapMorning.size || -1;
         const nNoon = this.fb?.mapNoon.size || -1;
         const nEven = this.fb?.mapEvening.size || -1;
+         const monthName = this.isHeb
+           ? getHebMonthName(this.firstDate)
+           : getEngMonthName(this.firstDate);
+
         this.fbString = `Morn:${nMorn}; Noon:${nNoon}; Even:${nEven}`;
+        this.leftTopTitle = monthName + ' ' + Globals.beginDate.getFullYear();
       }
     }
 

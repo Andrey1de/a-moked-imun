@@ -3,46 +3,60 @@
     <div>
     
     <div>
-        <div class="row">
-           <div class="col">
+        <div class="row ">
+            <div class="col mb-1"></div>
+           <div class="col mb-3">
                 <label for="idfirstMidStr" class="form-label">1st Date</label>
                 <div class="input-group mb-3">
                     <input type="text"  id="idfirstMidStr" [(ngModel)] = "firstMidStr">
                 </div>
            </div>
-           <div class="col">
+           <div class="col mb-3">
                 <label for="idnDays" class="form-label">N Days</label>
                 <div class="input-group mb-3">
                     <input type="number"  id="idnDays" [(ngModel)] = "nDays">
                 </div>
             </div>
+          <div class="col">
+                <button class="btn btn-primary" (click)="toGenerateFrame()">
+                    Create Frame</button>
+                <div ><strong> {{fbString}}</strong></div>
+           </div>
         </div>
     
-        <button class="btn btn-primary" (click)="toGenerateFrame()">
-                Create Frame</button>
-            <div ><strong> 
-                {{fbString}}
-            </strong>
-        </div>
-    </div>
+     </div>
 
     <table class="table table-success table-hoover" style="width:100%" [style.direction]="direction()">
         <thead>
-            <tr>
-                <th class="row-title" scope="col" [style.width]="dayPartWidth +'%'" >
+            <tr class="row-title">
+                <th  scope="col" [style.width]="dayPartWidth +'%'" >
                     #
                 </th>
-                <th class="row-title" scope="col" [style.width]="titleWidth +'%'" >
+                <th scope="col" [style.width]="titleWidth +'%'" >
                     {{leftTopTitle}}
                 </th>
             
-                  <th  class="row-title" *ngFor="let day of dayAxis"
+                <th   *ngFor="let day of dayAxis"
                         [style.width]="colWidth + '%'" 
                         [style.textAlign]="'center'"> 
                         {{day.dayName}}
                 </th>
             </tr>
         </thead>
+        <tbody>
+            <ng-container *ngFor="let _dayPartSites of dayPartSites">
+                <tr class="row-watches" *ngFor="let siteRow of _dayPartSites.rows">
+                    <td >{{_dayPartSites.faClass.substring(7)}}</td>
+                    <td >{{siteRow.site.name}}</td>
+                    <td  class="watch-event" *ngFor="let day of dayAxis"
+                            [style.width]="colWidth + '%'" 
+                            [style.textAlign]="'center'"> 
+                            {{day.dayName}}
+                    </td>
+                </tr>
+            </ng-container>
+        
+        </tbody>
     </table>    
 </div>
 
