@@ -2,11 +2,12 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { IDayAxis } from 'src/app/interfaces/iday-axis.model';
 import { DalService, Globals } from 'src/app/services/dal.service';
 import { FrameBuilder } from 'src/app/services/FrameBuilder';
+import { WatchCell } from 'src/app/services/watch-cell';
 import { DayPartRows, WatchRow } from 'src/app/services/watch-row';
 import { dateToString, DayPart, getEngMonthName, getHebMonthName, getMidnight } from 'src/app/utils/utils';
 import { environment } from 'src/environments/environment';
-const PART_ROW_PERC = 8;
-const TITLE_ROW_PERC = 20;
+const PART_ROW_PERC = 4;
+const TITLE_ROW_PERC = 14;
 
 @Component({
   selector: 'app-site-watches',
@@ -41,20 +42,23 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
   //     this.mapMorning, // 0
 
   constructor(readonly dal: DalService) {
-   // this.nDays = Globals.nDays;
+    // this.nDays = Globals.nDays;
     // this.firstDate = getMidnight(Globals.beginDate);
-     this.firstMidStr = dateToString(this.firstDate);
+    this.firstMidStr = dateToString(this.firstDate);
     this.colWidth = (100 - this.titleWidth - this.dayPartWidth) / this.nDays;
-   
+
     //this.leftTopTitle = monthName + ' ' + Globals.beginDate.getFullYear();
   }
+  onWatchCell(watch:WatchCell){
+    console.dir(watch);
+    debugger;
+  }
   ngOnDestroy(): void {
-     Globals.nDays = this.nDays ;
-     Globals.beginDate = getMidnight(this.firstDate);
-  
+    Globals.nDays = this.nDays;
+    Globals.beginDate = getMidnight(this.firstDate);
   }
   async ngOnInit() {
-    await this.toGenerateFrame();
+  //  await this.toGenerateFrame();
     // this.nDays = Globals.nDays;
     // this.firstDate = Globals.beginDate;
     // this.firstMidStr = dateToString(this.firstDate);
@@ -65,6 +69,9 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
     //   this.dayPartSites.push(this.fb.mapNoon);
     //   this.dayPartSites.push(this.fb.mapEvening);
     // }
+  }
+  localAlign(): string {
+    return !this.isHeb ? 'right' : 'left';
   }
   async toGenerateFrame() {
     if (!this.isFrame) {
@@ -78,15 +85,14 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
         const nMorn = this.fb?.mapMorning.size || -1;
         const nNoon = this.fb?.mapNoon.size || -1;
         const nEven = this.fb?.mapEvening.size || -1;
-         const monthName = this.isHeb
-           ? getHebMonthName(this.firstDate)
-           : getEngMonthName(this.firstDate);
+        const monthName = this.isHeb
+          ? getHebMonthName(this.firstDate)
+          : getEngMonthName(this.firstDate);
 
         this.fbString = `Morn:${nMorn}; Noon:${nNoon}; Even:${nEven}`;
         this.leftTopTitle = monthName + ' ' + Globals.beginDate.getFullYear();
       }
     }
 
-    //debugger;
   }
 }

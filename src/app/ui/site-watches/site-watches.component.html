@@ -32,11 +32,12 @@
                 <th  scope="col" [style.width]="dayPartWidth +'%'" >
                     #
                 </th>
-                <th scope="col" [style.width]="titleWidth +'%'" >
+                <th scope="col" class="border-lr2" [style.width]="titleWidth +'%'" 
+                    >
                     {{leftTopTitle}}
                 </th>
             
-                <th   *ngFor="let day of dayAxis"
+                <th  scope="col" *ngFor="let day of dayAxis"
                         [style.width]="colWidth + '%'" 
                         [style.textAlign]="'center'"> 
                         {{day.dayName}}
@@ -45,17 +46,47 @@
         </thead>
         <tbody>
             <ng-container *ngFor="let _dayPartSites of dayPartSites">
-                <tr class="row-watches" *ngFor="let siteRow of _dayPartSites.rows">
-                    <td >{{_dayPartSites.faClass.substring(7)}}</td>
-                    <td >{{siteRow.site.name}}</td>
-                    <td  class="watch-event" *ngFor="let day of dayAxis"
+                <tr class="row-watches" *ngFor="let siteRow of _dayPartSites.rows ; 
+                    let nRow=index"
+                    
+                    >
+                    <td [ngClass]="{'border-top2': nRow === 0}">
+                        <i class={{_dayPartSites.faClass}}> </i>
+                    </td>
+                    
+                    <td [ngClass]="{'border-top2': nRow === 0}" [style.text-align]="localAlign()" class="border-lr2">
+                        {{siteRow.site.name}}
+                    </td>
+                    <td  [ngClass]="{'border-top2': nRow === 0}"
+                        *ngFor="let watch of siteRow.watches "
                             [style.width]="colWidth + '%'" 
                             [style.textAlign]="'center'"> 
-                            {{day.dayName}}
+                        <div class="watch-cell s-tooltip" *ngIf="watch !== undefined"
+                            [style.width]="'100%'" 
+                            [style.color]="watch.guardColor"
+                            [style.background]="watch.guardBack"
+                            [style.text-align]="localAlign()"
+                            (click)="onWatchCell(watch)"
+                            >
+                                <span class="watch-name" > 
+                                    {{watch.watchText}}
+                                </span> 
+                            <div class="s-tooltip-text" >
+                                <div>
+                                    <strong>{{watch.watchToolTip}}</strong>
+                                </div>
+                                <div style="direction:ltr" >
+                                    {{watch.begStr}} - {{watch.endStr}}
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="watch === undefined">
+                            <i class="fas fa-ban" style="color:red"></i>
+                        </div>
+      
                     </td>
                 </tr>
             </ng-container>
-        
         </tbody>
     </table>    
 </div>

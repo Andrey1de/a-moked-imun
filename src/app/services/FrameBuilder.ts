@@ -37,7 +37,6 @@ export class FrameBuilder {
   //readonly mapWatchesDal: Map<number, IWatch> = new Map<number, IWatch>();
 
   constructor(readonly firstDate: Date, public nDays: number) {
-    // debugger;
     this.axis = new Array<IDayAxis>(7);
     this.firstMidStr = dateToString(firstDate);
     this.firstDate = new Date(this.firstMidStr);
@@ -163,7 +162,7 @@ export class FrameBuilder {
     try {
       return dayPartRows.setWatch(iw, iSiteJson);
     } catch (error) {
-      debugger;
+   //   debugger;
       console.error(error);
     }
 

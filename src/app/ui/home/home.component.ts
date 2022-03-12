@@ -25,6 +25,6 @@ export class HomeComponent implements OnInit {
     if(this.isFrame){
         this.fbString = `Morn:${nMorn}; Noon:${nNoon}; Even:${nEven}`;
     }
-    //debugger;
+    
   }
 }

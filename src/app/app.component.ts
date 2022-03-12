@@ -42,7 +42,6 @@ export class AppComponent implements OnInit {
     //   }
     // }
 
-    //debugger;
   }
   ngOnInit(): void {
     // const fb = await this.dal.generateFrame(this.firstMidStr, this.nDays); //new FrameBuilder(new Date(this.firstMidStr), this.nDays, []);

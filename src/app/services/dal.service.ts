@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { retry } from 'rxjs';
 import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
-import { IWatch } from '../interfaces/iwatch';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
 import { FrameBuilder } from './FrameBuilder';
 
@@ -180,12 +178,7 @@ export class DalService {
       Globals.beginDate = date;
       Globals.nDays = nDays;
       const fb = this._fb;
-    //   if (!!fb && fb.nDays == this.nDays && fb.firstMidStr == firstMIdStr) {
-    //     debugger;
-    //     return this._fb;
-    //   }
-
-      //debugger;
+  
       //??? get IWatches from DB
       this._fb = new FrameBuilder(date, nDays);
 

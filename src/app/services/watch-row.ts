@@ -92,15 +92,13 @@ export class DayPartRows {
   }
 }
 export class WatchRow {
-  private _watches!: WatchCell[];
+  readonly watches!: WatchCell[];
   public isFirst: boolean = false;
   public isLast: boolean = false;
   public siteId!: number;
 
   readonly firstDay2022!: number;
-  public get watches(): (WatchCell | undefined)[] {
-    return this._watches;
-  }
+
   constructor(
     readonly site: ISiteJson,
     readonly dayPart: DayPart,
@@ -111,7 +109,7 @@ export class WatchRow {
     this.firstDay2022 =
       ((this.firstDate.getTime() - BeginMs2022) / MS_IN_DAY) | 0;
 
-    this._watches = new Array<WatchCell>(this.nDays);
+    this.watches = new Array<WatchCell>(this.nDays);
   }
 
   private _index(idw: number): number {
@@ -128,7 +126,7 @@ export class WatchRow {
   setWatch(iw: IWatch): boolean {
     const n = this._index(iw.idw);
     if (n >= 0 && n < this.nDays) {
-      this._watches[n] = new WatchCell(iw);
+      this.watches[n] = new WatchCell(iw);
       return true;
     }
     return false;
@@ -137,7 +135,7 @@ export class WatchRow {
   getWatch(idw: number): WatchCell | undefined {
     const n = this._index(idw);
     if (n >= 0 && n < this.nDays) {
-      return this._watches[n];
+      return this.watches[n];
     }
     return undefined;
   }

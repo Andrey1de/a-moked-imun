@@ -116,6 +116,13 @@ export function dateToString(date: Date, isTime: boolean = false): string {
 export function dateToTimeString(date: Date) {
   return `${p2(date.getHours())}:${p2(date.getMinutes())}`;
 }
+export function hrToTimeString(hr : number) {
+  const min = Math.round((hr * 60) % 60);
+  hr = hr | 0; 
+  let ret =  p2(hr);
+  if (min !== 0) ret += ':' + p2(min);
+  return `${p2(hr)}:${p2(min)}`;
+}
 function p2(p: number): string {
   const str: string = p.toString();
   return str.length < 2 ? '0' + str : str;
