@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MOKGuardsJSon } from 'src/data/json/guards.data';
 import { MokSitesJSon } from 'src/data/json/sites.data';
+import { environment } from 'src/environments/environment';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
@@ -27,8 +28,7 @@ class CGlobals {
 
   private static _nDays: number = 7;
   public get nDays(): number {
-    let _nDaysStr =
-      localStorage.getItem(prefix + '_nDays') ;//|| CGlobals.nDays.toString();
+    let _nDaysStr = localStorage.getItem(prefix + '_nDays'); //|| CGlobals.nDays.toString();
     const n: number = +(_nDaysStr || '0');
     return n;
   }
@@ -62,6 +62,12 @@ class CGlobals {
     localStorage?.setItem(prefix + '_beginDate', dateToString(date, false));
     CGlobals._beginDate = date;
   }
+  get direction(): string {
+    return environment.direction?.toLowerCase() || 'rtl';
+  }
+  get isHeb(): boolean {
+    return this.direction == 'rtl';
+  }
 }
 const globalMapSiteJson: Map<number, ISiteJson> = new Map<number, ISiteJson>();
 const globalMapGuardJson: Map<number, IGuardJson> = new Map<
@@ -90,6 +96,7 @@ export function globalGuard(guardId: number): IGuardJson {
   return (
     globalMapGuardJson.get(guardId) ||
     ({
+      //WTF ????
       guardId: guardId,
       manager: '--',
       name: 'GUARD ERROR',
@@ -118,7 +125,6 @@ export class DalService {
 
   private iSites: ISiteJson[] = []; //MokSitesJSon;
   private iGuards: IGuardJson[] = []; //MOKGuardsJSon;
-  public Direction: string = 'ltr';
   private _fb!: FrameBuilder;
   get fb() {
     return this._fb;
@@ -178,7 +184,7 @@ export class DalService {
       Globals.beginDate = date;
       Globals.nDays = nDays;
       const fb = this._fb;
-  
+
       //??? get IWatches from DB
       this._fb = new FrameBuilder(date, nDays);
 

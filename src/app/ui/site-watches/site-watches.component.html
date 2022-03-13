@@ -54,7 +54,8 @@
                         <i class={{_dayPartSites.faClass}}> </i>
                     </td>
                     
-                    <td [ngClass]="{'border-top2': nRow === 0}" [style.text-align]="localAlign()" class="border-lr2">
+                    <td [ngClass]="{'border-top2': nRow === 0,'border-lr2':true}" 
+                    [style.text-align]="localAlign()" class="">
                         {{siteRow.site.name}}
                     </td>
                     <td  [ngClass]="{'border-top2': nRow === 0}"

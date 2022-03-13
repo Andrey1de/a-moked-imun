@@ -20,6 +20,7 @@ export class DayPartRows {
   }
   readonly name: string = '';
   readonly isHeb = environment.direction == 'rtl';
+  readonly dayPartBack:string ='';
 
   readonly faClass: string = 'fas fa-dove';
   readonly mapSiteWatcheRow: Map<number, WatchRow> = new Map<
@@ -35,14 +36,17 @@ export class DayPartRows {
       case DayPart.Morning:
         this.name = this.isHeb ? 'בוקר' : 'morning';
         this.faClass = 'fas fa-dove';
+        this.dayPartBack = 'rgba(0, 255, 255, 0.2)';
         break;
       case DayPart.Noon:
         this.name = this.isHeb ? 'צהריים' : 'noon';
         this.faClass = 'fas fa-sun';
-        break;
+        this.dayPartBack = 'rgba(255, 255, 0, 0.6)';
+       break;
       case DayPart.Evening:
         this.name = this.isHeb ? 'ערב' : 'night';
         this.faClass = 'fas fa-moon';
+        this.dayPartBack = 'rgba(0, 0, 255,0.4)';
         break;
 
       default:

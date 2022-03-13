@@ -121,7 +121,7 @@ export function hrToTimeString(hr : number) {
   hr = hr | 0; 
   let ret =  p2(hr);
   if (min !== 0) ret += ':' + p2(min);
-  return `${p2(hr)}:${p2(min)}`;
+  return `${hr}:${p2(min)}`;
 }
 function p2(p: number): string {
   const str: string = p.toString();
