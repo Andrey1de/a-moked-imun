@@ -32,7 +32,8 @@
                 <th  scope="col" [style.width]="dayPartWidth +'%'" >
                     #
                 </th>
-                <th scope="col" class="border-lr2" [style.width]="titleWidth +'%'" 
+                <th scope="col" class="border-lr2" 
+                [style.width]="titleWidth +'%'" 
                     >
                     {{leftTopTitle}}
                 </th>
@@ -46,20 +47,24 @@
         </thead>
         <tbody>
             <ng-container *ngFor="let _dayPartSites of dayPartSites">
-                <tr class="row-watches" *ngFor="let siteRow of _dayPartSites.rows ; 
-                    let nRow=index"
-                    
-                    >
-                    <td [ngClass]="{'border-top2': nRow === 0}">
+                <tr class="row-watches" 
+                *ngFor="let watchRow of _dayPartSites.rows ; 
+                    let nRow=index" >
+                    <td [ngClass]="{'border-top2': nRow === 0}"
+                        [style.color]="_dayPartSites.dayPartColor"
+                        [style.background]="_dayPartSites.dayPartBack">
                         <i class={{_dayPartSites.faClass}}> </i>
                     </td>
                     
                     <td [ngClass]="{'border-top2': nRow === 0,'border-lr2':true}" 
-                    [style.text-align]="localAlign()" class="">
-                        {{siteRow.site.name}}
+                        [style.text-align]="localAlign()"
+                        [style.padding-left]="'4px'" 
+                        [style.padding-right]="'4px'" 
+                        >
+                        {{watchRow.site.name}}
                     </td>
                     <td  [ngClass]="{'border-top2': nRow === 0}"
-                        *ngFor="let watch of siteRow.watches "
+                        *ngFor="let watch of watchRow.watches "
                             [style.width]="colWidth + '%'" 
                             [style.textAlign]="'center'"> 
                         <div class="watch-cell s-tooltip" *ngIf="watch !== undefined"
