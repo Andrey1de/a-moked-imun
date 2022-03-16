@@ -117,6 +117,7 @@ export function dateToTimeString(date: Date) {
   return `${p2(date.getHours())}:${p2(date.getMinutes())}`;
 }
 export function hrToTimeString(hr : number) {
+  hr %= 24;
   const min = Math.round((hr * 60) % 60);
   hr = hr | 0; 
   let ret =  p2(hr);

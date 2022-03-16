@@ -37,6 +37,8 @@ export class WatchCell {
     this._Site = globalSite(this.siteId);
     this.siteName = this._Site.name;
     this.guardId = this.iWatch.guardId;
+    this.begStr = hrToTimeString(iWatch.beginH);
+    this.endStr = hrToTimeString(iWatch.beginH + iWatch.lengthH);
   }
 
   public set guardId(grd: number) {

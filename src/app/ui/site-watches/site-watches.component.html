@@ -1,31 +1,7 @@
 
 <div class="s-container"  [style.direction]="direction()">
-    <div>
-    
-    <div>
-        <div class="row ">
-            <div class="col mb-1"></div>
-           <div class="col mb-3">
-                <label for="idfirstMidStr" class="form-label">1st Date</label>
-                <div class="input-group mb-3">
-                    <input type="text"  id="idfirstMidStr" [(ngModel)] = "firstMidStr">
-                </div>
-           </div>
-           <div class="col mb-3">
-                <label for="idnDays" class="form-label">N Days</label>
-                <div class="input-group mb-3">
-                    <input type="number"  id="idnDays" [(ngModel)] = "nDays">
-                </div>
-            </div>
-          <div class="col">
-                <button class="btn btn-primary" (click)="toGenerateFrame()">
-                    Create Frame</button>
-                <div ><strong> {{fbString}}</strong></div>
-           </div>
-        </div>
-    
-     </div>
 
+  
     <table class="table table-success table-hoover" style="width:100%" [style.direction]="direction()">
         <thead>
             <tr class="row-title">
@@ -39,9 +15,9 @@
                 </th>
             
                 <th  scope="col" *ngFor="let day of dayAxis"
-                        [style.width]="colWidth + '%'" 
-                        [style.textAlign]="'center'"> 
-                        {{day.dayName}}
+                    [style.width]="colWidth + '%'" 
+                    [style.textAlign]="'center'"> 
+                    {{day.dayName}}
                 </th>
             </tr>
         </thead>
@@ -67,16 +43,17 @@
                         *ngFor="let watch of watchRow.watches "
                             [style.width]="colWidth + '%'" 
                             [style.textAlign]="'center'"> 
-                        <div class="watch-cell s-tooltip" *ngIf="watch !== undefined"
+                        <div class="watch-cell s-tooltip" 
+                            *ngIf="watch !== undefined"
                             [style.width]="'100%'" 
                             [style.color]="watch.guardColor"
                             [style.background]="watch.guardBack"
                             [style.text-align]="localAlign()"
                             (click)="onWatchCell(watch)"
                             >
-                                <span class="watch-name" > 
-                                    {{watch.watchText}}
-                                </span> 
+                            <span class="watch-name" > 
+                                {{watch.watchText}}
+                            </span> 
                             <div class="s-tooltip-text" >
                                 <div>
                                     <strong>{{watch.watchToolTip}}</strong>
@@ -94,7 +71,31 @@
                 </tr>
             </ng-container>
         </tbody>
-    </table>    
+    </table> 
+  <div>
+        <div class="row ">
+            <div class="col mb-1"></div>
+           <div class="col mb-3">
+                <label for="idfirstMidStr" class="form-label">1st Date</label>
+                <div class="input-group mb-3">
+                    <input type="text"  id="idfirstMidStr" [(ngModel)] = "firstMidStr">
+                </div>
+           </div>
+           <div class="col mb-3">
+                <label for="idnDays" class="form-label">N Days</label>
+                <div class="input-group mb-3">
+                    <input type="number"  id="idnDays" [(ngModel)] = "nDays">
+                </div>
+            </div>
+          <div class="col">
+                <button class="btn btn-primary" (click)="toGenerateFrame()">
+                    Create Frame</button>
+                <div ><strong> {{fbString}}</strong></div>
+           </div>
+        </div>
+    
+    </div>
+
 </div>
 
 <!--<tbody> 

@@ -11,14 +11,22 @@ const prefix: string = 'a-moked-imun-CGlobals';
 class CGlobals {
   //beginDate: Date = midnight(new Date());
   static nDays: number = 7;
-  readonly isLocal: boolean = !!localStorage;
+
   init() {
-    // if (localStorage) {
-    //   let beginDate = this.beginDate;
-    //   this.initNDays();
-    // }
+    if (localStorage) {
+        debugger;
+      this.initBeginDate();
+      this.initNDays();
+    }
   }
-  initNDays() {
+  private initBeginDate() {
+    let _beginDatStr: string =
+      '' + localStorage?.getItem(prefix + '_beginDate');
+    if (CGlobals._beginDateStr.length >= 10) {
+      CGlobals._beginDate = new Date(_beginDatStr);
+    }
+  }
+  private initNDays() {
     let _nDaysStr = localStorage.getItem(prefix + '_nDays');
     if (_nDaysStr) {
       CGlobals.nDays = +_nDaysStr | 0;
@@ -35,31 +43,33 @@ class CGlobals {
   public set nDays(n: number) {
     n = n | 0;
 
-    localStorage?.setItem(prefix + '_beginDate', n.toFixed(0));
+    localStorage?.setItem(prefix + '_nDays', n.toFixed(0));
     CGlobals._nDays = n | 0;
   }
 
   //===========BEGIN DATE =========================
 
   static _beginDate: Date = new Date(0);
+  static _beginDateStr: string = '';
 
   public get beginDateStr(): string {
-    let _beginDateStr = '' + localStorage?.getItem(prefix + '_beginDate');
-    return _beginDateStr;
+   // let _beginDateStr = '' + localStorage?.getItem(prefix + '_beginDate');
+    return CGlobals._beginDateStr;
   }
 
   public get beginDate(): Date {
     if (CGlobals._beginDate.getTime() === 0 && localStorage) {
-      let _beginDateStr = this.beginDateStr;
-      if (_beginDateStr) {
-        CGlobals._beginDate = getMidnight(new Date(_beginDateStr));
+      let _beginDateStr: string = '' || this.beginDateStr;
+      if (CGlobals._beginDateStr.length >= 10) {
+        CGlobals._beginDate = getMidnight(new Date(CGlobals._beginDateStr));
       }
     }
     return CGlobals._beginDate;
   }
   public set beginDate(date: Date) {
     date = getMidnight(date);
-    localStorage?.setItem(prefix + '_beginDate', dateToString(date, false));
+    CGlobals._beginDateStr = dateToString(date, false);
+    localStorage?.setItem(prefix + '_beginDate', CGlobals._beginDateStr);
     CGlobals._beginDate = date;
   }
   get direction(): string {
