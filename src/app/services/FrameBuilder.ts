@@ -14,8 +14,9 @@ import {
   getDayPart,
   getDayPartH,
 } from '../utils/utils';
-import { globalAllSites, Globals, globalSite } from './dal.service';
-import { DayPartRows, WatchRow } from './watch-row';
+import { globalAllSites,  globalSite } from './dal.service';
+import { DayPartRows } from './WatchRow';
+
 export class FrameBuilder {
   readonly axis!: IDayAxis[];
   readonly iSites: ISiteJson[] = [];

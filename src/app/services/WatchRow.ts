@@ -3,7 +3,8 @@ import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
 import { MS_IN_DAY, idwParts, BeginMs2022, DayPart } from '../utils/utils';
 import { globalSite } from './dal.service';
-import { WatchCell } from './watch-cell';
+import { WatchCell } from './WatchCell';
+import { WatchHolder } from './WatchHolder';
 export class DayPartRows {
   public get size() {
     return this.mapSiteWatcheRow.size;
@@ -25,10 +26,8 @@ export class DayPartRows {
   readonly dayPartColor: string = 'white';
 
   readonly faClass: string = 'fas fa-dove';
-  readonly mapSiteWatcheRow: Map<number, WatchRow> = new Map<
-    number,
-    WatchRow
-  >();
+  readonly mapSiteWatcheRow: Map<number, WatchRow>
+     = new Map<number,WatchRow>();
   constructor(
     readonly dayPart: DayPart,
     readonly nDays: number,
@@ -132,10 +131,13 @@ export class WatchRow {
     return ft ? n : -1;
   }
 
-  setWatch(iw: IWatch): boolean {
-    const n = this._index(iw.idw);
+  setWatch(iWatch: IWatch): boolean {
+    const n = this._index(iWatch.idw);
     if (n >= 0 && n < this.nDays) {
-      this.watches[n] = new WatchCell(iw);
+      const watch = new WatchCell(iWatch);
+      WatchHolder.setCell(watch);
+
+      this.watches[n] = watch;
       return true;
     }
     return false;

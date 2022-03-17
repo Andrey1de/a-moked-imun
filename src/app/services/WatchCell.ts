@@ -1,51 +1,68 @@
-import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { environment } from 'src/environments/environment';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
-import { DayPart, getDayPartH, hrToTimeString } from '../utils/utils';
+import { 
+    correctIWatch, 
+    DayPart, 
+    getDayPartH, 
+    hrToTimeString } from '../utils/utils';
+import { CWatchHolder } from './WatchHolder';
+
 import { globalGuard, globalSite } from './dal.service';
 
 export class WatchCell {
+  readonly isHeb = environment.direction === 'rtl';
+  readonly idw!:number;
   readonly siteId!: number;
   readonly midnight!: string;
   readonly dayPart!: DayPart;
-  private _guardId!: number; //this.int.guardId;
+
+
+ 
   isDirty: boolean = false;
   private _Guard!: IGuardJson;
   readonly _Site: ISiteJson;
-  readonly lengthH: number;
-  readonly begStr: string = '';
-  readonly endStr: string = '';
-  watchText: string = '';
-  readonly isHeb = environment.direction === 'rtl';
 
+  beginH!:number;
+  lengthH!: number;
+  begStr: string = '';
+  endStr: string = '';
+  watchText: string = '';
+
+  guardId!:number;
   guardName: string = '';
   siteName: string = '';
   guardBack: string = 'white';
   guardColor: string = 'black';
   guardAddress: string = '';
   watchToolTip: string = '';
-  public get guardId(): number {
-    return this._guardId;
-  }
 
   constructor(readonly iWatch: IWatch) {
+    this.idw =this.iWatch.idw;
+    this.iWatch = correctIWatch(this.iWatch);
     this.siteId = this.iWatch.siteId;
-    this.lengthH = iWatch.lengthH;
+    this.midnight = this.iWatch.midnight;
     this.dayPart = getDayPartH(iWatch.beginH);
     this._Site = globalSite(this.siteId);
     this.siteName = this._Site.name;
-    this.guardId = this.iWatch.guardId;
-    this.begStr = hrToTimeString(iWatch.beginH);
-    this.endStr = hrToTimeString(iWatch.beginH + iWatch.lengthH);
+    this.setBeginLengthH(this.iWatch.beginH, this.iWatch.lengthH);
+    this.setGuardId(this.iWatch.guardId);
+    this.isDirty = false;
+  }
+  public setBeginLengthH(beginH: number,lengthH:number){
+    this.isDirty = true;
+    this.beginH = beginH;
+    this.lengthH = lengthH;
+    this.begStr = hrToTimeString(beginH);
+    this.endStr = hrToTimeString(beginH + lengthH);
   }
 
-  public set guardId(grd: number) {
+  public setGuardId(grd: number) {
     //TBD emit event
     this.isDirty = true;
-    this._guardId = grd;
-    this._Guard = globalGuard(this._guardId);
+    this.guardId = grd;
+    this._Guard = globalGuard(this.guardId);
 
     this.guardName = this._Guard.name;
     this.guardBack = this._Guard.background;
@@ -54,20 +71,15 @@ export class WatchCell {
     this.watchText = `${this.lengthH} ${this.guardName}`;
 
     this.watchToolTip = this.isHeb
-      ? `${this.guardName} ${this.lengthH} שעות \n` +
-        `ב ${this.siteName}`
-      : `${this.lengthH} ${this.guardName} hrs\n` +
-        `in ${this.siteName}`;
+      ? `${this.guardName} ${this.lengthH} שעות \n` + `ב ${this.siteName}`
+      : `${this.lengthH} ${this.guardName} hrs\n` + `in ${this.siteName}`;
   }
 
-  private _dirty: boolean = false;
-  public get dirty(): boolean {
-    return this._dirty;
-  }
+   dirty: boolean = false;
 
-  isWatch(watch: WatchCell): boolean {
-    return !!watch;
-  }
+//   isWatch(watch: WatchCell): boolean {
+//     return !!watch;
+//   }
   // private set dirty(v : boolean) {
   //   this._dirty = v;
   // }
@@ -100,3 +112,4 @@ export class WatchCell {
   //   }
   // }
 }
+

@@ -1,6 +1,7 @@
 import { IWatch } from '../interfaces/iwatch';
-import { BeginMs2022, DayPart, getDayPartH, getMidnight, midMsToN2022, MS_IN_DAY } from '../utils/utils';
-import { WatchCell } from './watch-cell';
+import {  DayPart, getDayPartH,  midMsToN2022 } from '../utils/utils';
+import { WatchCell } from './WatchCell';
+import { WatchHolder } from './WatchHolder';
 
 export class SiteWatchesRow {
   public watches: (WatchCell | undefined)[] = [];
@@ -25,7 +26,10 @@ export class SiteWatchesRow {
         const _midNightMs = new Date(iWatch.midnight).getTime();
         const nDay = midMsToN2022(_midNightMs) - this.firstDay;
         if (nDay >= 0 && nDay < this.nDays) {
-            this.watches[nDay] = new WatchCell(iWatch);
+            const watch = = new WatchCell(iWatch);
+            this.watches[nDay] = watch;
+            WatchHolder.setCell(watch);
+
             this._nSet++;
         }
     }

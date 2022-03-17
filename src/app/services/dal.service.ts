@@ -6,11 +6,12 @@ import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
 import { addDays, dateToString, getMidnight } from '../utils/utils';
 import { FrameBuilder } from './FrameBuilder';
+import { WatchCell } from './WatchCell';
 
 const prefix: string = 'a-moked-imun-CGlobals';
 class CGlobals {
   //beginDate: Date = midnight(new Date());
-  static nDays: number = 7;
+ 
 
   init() {
     if (localStorage) {
@@ -29,7 +30,7 @@ class CGlobals {
   private initNDays() {
     let _nDaysStr = localStorage.getItem(prefix + '_nDays');
     if (_nDaysStr) {
-      CGlobals.nDays = +_nDaysStr | 0;
+      CGlobals._nDays = +_nDaysStr | 0;
     }
   }
   //===========NDAYS===============================
@@ -84,6 +85,8 @@ const globalMapGuardJson: Map<number, IGuardJson> = new Map<
   number,
   IGuardJson
 >();
+
+
 export function globalAllSites(): ISiteJson[] {
   return [...globalMapSiteJson.values()];
 }
