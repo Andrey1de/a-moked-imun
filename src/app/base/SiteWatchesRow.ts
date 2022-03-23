@@ -26,7 +26,7 @@ export class SiteWatchesRow {
         const _midNightMs = new Date(iWatch.midnight).getTime();
         const nDay = midMsToN2022(_midNightMs) - this.firstDay;
         if (nDay >= 0 && nDay < this.nDays) {
-            const watch = = new WatchCell(iWatch);
+            const watch = new WatchCell(iWatch);
             this.watches[nDay] = watch;
             WatchHolder.setCell(watch);
 

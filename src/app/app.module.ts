@@ -6,16 +6,21 @@ import { AppComponent } from './app.component';
 import { SiteWatchesComponent } from './ui/site-watches/site-watches.component';
 import { HomeComponent } from './ui/home/home.component';
 import { FormsModule } from '@angular/forms';
+import { LaunchComponent } from './ui/launch/launch.component';
+import { SettingsComponent } from './ui/settings/settings.component';
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
+  { path: 'launch', component: LaunchComponent },
   { path: 'site-watches', component: SiteWatchesComponent },
-  { path: '', redirectTo: '/site-watches', pathMatch: 'full' }, //
+  { path: '', redirectTo: '/launch', pathMatch: 'full' }, //
 ];
 @NgModule({
   declarations: [
     AppComponent,
      SiteWatchesComponent,
-    HomeComponent
+    HomeComponent,
+    LaunchComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

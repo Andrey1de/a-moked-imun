@@ -1,4 +1,4 @@
-import { IWatch } from "../interfaces/iwatch";
+import { IWatch, IWatchJson } from "../interfaces/iwatch";
 
 export const Begin2022 = new Date('2022-01-01 00:00');
 export const BeginMs2022 = Begin2022.getTime();
@@ -39,6 +39,10 @@ export function dateToN2022(date: Date) {
 export function midMsToN2022(midMs: number) {
   return ((midMs - BeginMs2022) / MS_IN_DAY) | 0;
 }
+
+export function idwToN2022(idw: number) {
+  return (idw / 10000) |0;
+}
 export function msToIdw(midMs: number, begH: number, siteId: number): number {
   let ret = (siteId % 1000) + ((begH / 6) | 0) * 1000;
   ret += (((midMs - BeginMs2022) / MS_IN_DAY) | 0) * 10000;
@@ -52,14 +56,27 @@ export function idwParts(idw: number) {
       dayPart: ((idw / 1000) % 10|0)
     }
 }
- export function correctIWatch(iw: IWatch) {
-   if (!!iw.idw && !!iw.date) {
-     return iw;
-   }
-   const _date = new Date(iw.midnight);
-   const _idhw = msToIdw(_date.getTime(), iw.beginH, iw.siteId);
-   return { ...iw, idw: _idhw, date: _date };
- }
+export function correctIWatchJson(iw: IWatchJson): IWatch {
+
+  //  if (!!iw.idw && !!iw.date) {
+  //    return iw;
+  //  }
+  const _midnight: string = iw.midnight.split(/[ tz,;]/gi)[0];
+  const _date = new Date(_midnight);
+  const _idhw = (_date.getTime(), iw.beginH, iw.siteId);
+  return {
+    idw: _idhw,
+    siteId: iw.siteId, // "2";
+    guardId: iw.guardId, // "101";
+    midnight: iw.midnight.split(/[ tz,;]/gi)[0],
+    beginH: iw.beginH,
+    lengthH: iw.lengthH,
+    n2022: idwToN2022(_idhw),
+    date: _date,
+  };
+}
+
+
 
 // export function msToIdw(msMidnight :number, begH : number, siteId: number = 0): number {
 //   let ret = <number>getDayPartH(begH)+

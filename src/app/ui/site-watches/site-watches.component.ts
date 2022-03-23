@@ -1,11 +1,12 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { IDayAxis } from 'src/app/interfaces/iday-axis.model';
-import { DalService, Globals } from 'src/app/services/dal.service';
-import { FrameBuilder } from 'src/app/services/FrameBuilder';
-import { WatchCell } from 'src/app/services/WatchCell';
-import { DayPartRows, WatchRow } from 'src/app/services/WatchRow';
+import { DalService } from 'src/app/services/dal.service';
+import { FrameBuilder } from 'src/app/base/FrameBuilder';
+import { WatchCell } from 'src/app/base/WatchCell';
+import { DayPartRows, WatchRow } from 'src/app/ui/WatchRow';
 import { dateToString, DayPart, getEngMonthName, getHebMonthName, getMidnight } from 'src/app/utils/utils';
 import { environment } from 'src/environments/environment';
+import { Globals } from 'src/app/services/globals';
 const PART_ROW_PERC = 4;
 const TITLE_ROW_PERC = 14;
 
@@ -51,7 +52,7 @@ export class SiteWatchesComponent implements OnInit, OnDestroy {
   }
   onWatchCell(watch:WatchCell){
     console.dir(watch);
-    debugger;
+   // debugger;
   }
   ngOnDestroy(): void {
     Globals.nDays = this.nDays;

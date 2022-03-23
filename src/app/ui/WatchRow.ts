@@ -2,9 +2,9 @@ import { environment } from 'src/environments/environment';
 import { ISiteJson } from '../interfaces/isite-json';
 import { IWatch } from '../interfaces/iwatch';
 import { MS_IN_DAY, idwParts, BeginMs2022, DayPart } from '../utils/utils';
-import { globalSite } from './dal.service';
-import { WatchCell } from './WatchCell';
-import { WatchHolder } from './WatchHolder';
+import { WatchCell } from '../base/WatchCell';
+import { WatchHolder } from '../base/WatchHolder';
+import { Globals } from '../services/globals';
 export class DayPartRows {
   public get size() {
     return this.mapSiteWatcheRow.size;
@@ -26,8 +26,10 @@ export class DayPartRows {
   readonly dayPartColor: string = 'white';
 
   readonly faClass: string = 'fas fa-dove';
-  readonly mapSiteWatcheRow: Map<number, WatchRow>
-     = new Map<number,WatchRow>();
+  readonly mapSiteWatcheRow: Map<number, WatchRow> = new Map<
+    number,
+    WatchRow
+  >();
   constructor(
     readonly dayPart: DayPart,
     readonly nDays: number,
@@ -51,7 +53,7 @@ export class DayPartRows {
         this.faClass = 'fas fa-moon';
         this.dayPartBack = 'rgba(0, 0, 255, 1.0)';
         this.dayPartColor = 'rgba(255, 253, 55, 1.0)';
-         break;
+        break;
 
       default:
         break;
@@ -66,32 +68,14 @@ export class DayPartRows {
     return this.mapSiteWatcheRow.get(siteId);
   }
 
-  public setWatch(
-    iw: IWatch,
-    iSiteJson: ISiteJson | undefined = undefined
-  ): boolean {
-    iSiteJson = iSiteJson || globalSite(iw.siteId);
+  public setWatch(iw: IWatch): boolean {
+    //iSiteJson = iSiteJson || Globals.iSites(iw.siteId);
     const { siteId, n2022, dayPart } = idwParts(iw.idw);
     if (dayPart != this.dayPart) return false;
-    // let row: Map<number, WatchRow>; //= this.mapMorning;
-    // switch (dayPart) {
-    // case DayPart.Morning:
-    //     row = this.mapMorning;
-    //     break;
-    // case DayPart.Noon:
-    //     row = this.mapNoon;
-    //     break;
-    // case DayPart.Evening:
-    //     row = this.mapEvening;
-    //     break;
-
-    // default:
-    //     return false;
-    // }
 
     let watchRow = this.getRow(siteId);
     if (!watchRow) {
-      watchRow = new WatchRow(iSiteJson, dayPart, this.nDays, this.firstDate);
+      watchRow = new WatchRow(siteId, dayPart, this.nDays, this.firstDate);
       watchRow.isFirst = true;
       this.mapSiteWatcheRow.set(siteId, watchRow);
     }
@@ -103,17 +87,17 @@ export class WatchRow {
   readonly watches!: WatchCell[];
   public isFirst: boolean = false;
   public isLast: boolean = false;
-  public siteId!: number;
 
   readonly firstDay2022!: number;
+  readonly site!: ISiteJson;
 
   constructor(
-    readonly site: ISiteJson,
+    readonly siteId: number,
     readonly dayPart: DayPart,
     readonly nDays: number,
     readonly firstDate: Date
   ) {
-    this.siteId = this.site.siteId;
+    this.site = Globals.getISite(this.siteId);
     this.firstDay2022 =
       ((this.firstDate.getTime() - BeginMs2022) / MS_IN_DAY) | 0;
 

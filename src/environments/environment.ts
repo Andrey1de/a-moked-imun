@@ -8,7 +8,8 @@ export const environment = {
   isMOK: false,
   isFILE: true,
   csvFileName: 'isite-csv.csv',
-  direction: 'rtl',
+  direction: 'ltr',
+  prefixLocalStore: 'a-moked-imun-CGlobals',
 
   urlSites: 'https://aed-data-cloud.herokuapp.com/cloud/users/shay/sites',
   urlGuards: 'https://aed-data-cloud.herokuapp.com/cloud/users/shay/guards',

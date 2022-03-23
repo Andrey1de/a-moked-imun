@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { DalService, Globals } from 'src/app/services/dal.service';
+import { DalService } from 'src/app/services/dal.service';
+import { Globals } from 'src/app/services/globals';
 
 @Component({
   selector: 'app-home',
