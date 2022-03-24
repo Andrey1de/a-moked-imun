@@ -1,1 +1,17 @@
-<p>settings works!</p>
+<label for="meeting-time">Choose a time for your appointment:</label>
+
+<input [(ngModel)]="strDate "type="date" id="meeting-time"
+       name="meeting-time" > 
+     <span >{{strDate}}</span>
+<br>
+<input  type="file" class="btn btn-info" (change)="onFileChanged($event)"
+  #fileInput>
+ <!-- <button type="button" class="btn btn-info" 
+  (click)="fileInput.click()">Select File</button>  -->
+<!-- <button (click)="onUpload()">Upload!</button>
+<br> -->
+<strong>selectedFile:{{selectedFile}}</strong>
+<br>
+<br>
+ <strong>arrWatchCsv.length:{{arrWatchCsv.length}}</strong>
+<br>

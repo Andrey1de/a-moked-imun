@@ -5,9 +5,10 @@
 export const environment = {
   production: false,
 
-  isMOK: false,
+  isMOK: true,
   isFILE: true,
   csvFileName: 'isite-csv.csv',
+  settingsFileName: 'a-moked-imun-settings.json',
   direction: 'ltr',
   prefixLocalStore: 'a-moked-imun-CGlobals',
 

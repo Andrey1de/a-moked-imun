@@ -22,11 +22,7 @@ export class DalService {
   public get nDays(): number {
     return Globals.nDays;
   }
-  private _endDate!: Date;
-  get endDate(): Date {
-    return this._endDate;
-  }
-
+  
   private _fb!: FrameBuilder;
   get fb() {
     return this._fb;
@@ -36,6 +32,7 @@ export class DalService {
   init() {
     if (!DalService.isInit) {
       try {
+        Globals.init();
         this.toInit();
         DalService.isInit = true;
       } catch (error) {
@@ -43,18 +40,19 @@ export class DalService {
       }
     }
   }
-  private toInit() {
-    Globals.init();
-    this._endDate = addDays(this.beginDate, this.nDays);
+  public toInit() {
+   
     this.retriveSites();
     this.retrieveGuards();
   }
+
+
   private retrieveGuards() {
     const iGuardStr = localStorage?.getItem(prefix + '_iGuards');
     if (iGuardStr) {
       let jsonObj: any = JSON.parse(iGuardStr); // string to generic object first
       Globals.iGuards = <IGuardJson[]>jsonObj;
-    } else {
+    } else if(environment.isMOK){
       Globals.iGuards = MOKGuardsJSon;
       localStorage?.setItem(
         prefix + '_iGuards',
@@ -67,7 +65,7 @@ export class DalService {
     if (iSiteStr) {
       let jsonObj: any = JSON.parse(iSiteStr); // string to generic object first
       Globals.iSites = <ISiteJson[]>jsonObj;
-    } else {
+    } else if (environment.isMOK) {
       Globals.iSites = MokSitesJSon;
       localStorage?.setItem(prefix + '_iSites', JSON.stringify(Globals.iSites));
     }
