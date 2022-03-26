@@ -8,6 +8,7 @@ import { FrameBuilder } from '../base/FrameBuilder';
 import { environment } from 'src/environments/environment';
 import { IWatchJson } from '../interfaces/iwatch';
 import { Globals } from './globals';
+import { ISetttings } from '../interfaces/isetttings';
 
 const prefix: string = environment.prefixLocalStore;
 
@@ -22,7 +23,7 @@ export class DalService {
   public get nDays(): number {
     return Globals.nDays;
   }
-  
+
   private _fb!: FrameBuilder;
   get fb() {
     return this._fb;
@@ -41,18 +42,17 @@ export class DalService {
     }
   }
   public toInit() {
-   
+  //  debugger;
     this.retriveSites();
     this.retrieveGuards();
   }
-
-
+ 
   private retrieveGuards() {
     const iGuardStr = localStorage?.getItem(prefix + '_iGuards');
     if (iGuardStr) {
       let jsonObj: any = JSON.parse(iGuardStr); // string to generic object first
       Globals.iGuards = <IGuardJson[]>jsonObj;
-    } else if(environment.isMOK){
+    } else if (environment.isMOK) {
       Globals.iGuards = MOKGuardsJSon;
       localStorage?.setItem(
         prefix + '_iGuards',

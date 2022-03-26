@@ -10,14 +10,15 @@ import { LaunchComponent } from './ui/launch/launch.component';
 import { SettingsComponent } from './ui/settings/settings.component';
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: 'launch', component: LaunchComponent },
   { path: 'site-watches', component: SiteWatchesComponent },
-  { path: '', redirectTo: '/launch', pathMatch: 'full' }, //
+  { path: '', redirectTo: '/settings', pathMatch: 'full' }, //
 ];
 @NgModule({
   declarations: [
     AppComponent,
-     SiteWatchesComponent,
+    SiteWatchesComponent,
     HomeComponent,
     LaunchComponent,
     SettingsComponent

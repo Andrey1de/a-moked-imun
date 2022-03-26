@@ -1,6 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { IGuardJson } from 'src/app/interfaces/iguard-json';
-import { ISiteJson } from 'src/app/interfaces/isite-json';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { IWatch } from 'src/app/interfaces/iwatch';
 import { DalService } from 'src/app/services/dal.service';
 import { Globals } from 'src/app/services/globals';
@@ -12,21 +10,17 @@ import { ISetttings } from '../../interfaces/isetttings';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
 })
-export class SettingsComponent implements OnInit, ISetttings {
-  beginDateStr: string = '';
-  nDays: number = 0;
-  endDateStr: string = '';
-  dirty: boolean = false;
-  iSites: ISiteJson[] = [];
-  iGuards: IGuardJson[] = [];
+export class SettingsComponent implements OnInit, OnDestroy {
+  intrf!: ISetttings;
+
   iWatches: IWatch[] = [];
-  selectedFile!: string;
+  settingsFile!: string;
   get valid(): boolean {
     return (
-      this.nDays > 0 &&
-      this.beginDateStr.length >= 10 &&
-      this.iSites.length > 0 &&
-      this.iGuards.length > 0
+      this.intrf.nDays > 0 &&
+      this.intrf.beginDateStr.length >= 10 &&
+      this.intrf.iSites.length > 0 &&
+      this.intrf.iGuards.length > 0
     );
   }
 
@@ -34,43 +28,95 @@ export class SettingsComponent implements OnInit, ISetttings {
 
   ngOnInit(): void {
     this.dal.init();
-    this.nDays = Globals.nDays;
-    this.beginDateStr = dateToString(Globals.beginDate);
-    this.endDateStr = dateToString(addDays(Globals.beginDate, this.nDays));
-    this.iSites = Globals.iSites;
-    this.iGuards = Globals.iGuards;
-    this.selectedFile = environment.settingsFileName;
-  }
+    let _beginDateStr = dateToString(Globals.beginDate);
+    let _endDateStr = dateToString(addDays(Globals.beginDate, Globals.nDays));
+    this.go();
 
-  async onFileUpload(event: any) {
+    const intrf = {
+      nDays: Globals.nDays,
+      beginDateStr: _beginDateStr,
+      endDateStr: _endDateStr,
+      dirty: false,
+      iSites: Globals.iSites,
+      iGuards: Globals.iGuards,
+      iWatchJsons: Globals.iWatchJsons,
+      settingsFile: environment.settingsFileName,
+    } as ISetttings;
+    this.attachSettings(intrf);
+  }
+  go()
+  {
+
+    const map = new Map<string,any>();
+    map.set('aaa', { n: 1, str: 'aaa' });
+    map.set('bbb', { n: 2, str: 'bbb' });
+    map.set('ccc', { n: 3, str: 'ccc' });
+    let jsonObject:any = {};
+    map.forEach((value, key) => {
+      jsonObject[key] = value;
+    });
+    console.log('go()',JSON.stringify(jsonObject));  
+
+  }
+  attachSettings(intrf: ISetttings) {
+    this.intrf = { ...intrf };
+  }
+  fileSettingsRead(event: any) {
     //debugger;
     const reader = new FileReader();
 
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
-      this.selectedFile = file;
+      this.intrf.settingsFile = file;
+      console.log('file', file);
       reader.readAsText(file);
 
       reader.onloadend = () => {
         const strOut = reader.result?.toString() || '';
-        const obj = JSON.parse(strOut) as ISetttings;
-        // debugger;
+        const settings: ISetttings = JSON.parse(strOut) as ISetttings;
 
+        localStorage.setItem('AppComponent.arrWatchCsv', strOut);
+        this.attachSettings(settings);
         // need to run CD since file load runs outside of zone
         this.cd.markForCheck();
       };
     }
   }
-
-  async saveSettings() {
+  async fileSettingsSave(event: any) {
     //, filename: string = environment.settingsFileName) {
-    const intrf: ISetttings = { ...(this as ISetttings) };
-    const text: string = JSON.stringify(intrf);
-    const encoded: string = encodeURIComponent(text);
 
-    var a = document.createElement('a');
-    a.setAttribute('href', 'data:text/plain;charset=utf-u,' + encoded);
-    a.setAttribute('download', environment.settingsFileName);
-    a.click();
+    try {
+      const text: string = JSON.stringify(this.intrf, null, 2);
+      const encoded: string = encodeURIComponent(text);
+
+      var a = document.createElement('a');
+      a.setAttribute('href', 'data:text/plain;charset=utf-u,' + encoded);
+      a.setAttribute('download', environment.settingsFileName);
+      a.click();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  ngOnDestroy(): void {
+    Globals.nDays = this.intrf.nDays;
+  }
+
+  beginDateChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const begDate = new Date(target.value);
+    const endDate = addDays(begDate, this.intrf.nDays);
+    this.intrf.beginDateStr = dateToString(begDate);
+    this.intrf.endDateStr = dateToString(endDate);
+    this.intrf.dirty = true;
+   
+  }
+  nDaysChange(event: Event) {
+    const begDate = new Date(this.intrf.beginDateStr);
+
+    const endDate = addDays(begDate, this.intrf.nDays);
+    this.intrf.endDateStr = dateToString(endDate);
+    this.intrf.dirty = true;
+ 
   }
 }

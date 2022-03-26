@@ -1,8 +1,15 @@
 import { environment } from 'src/environments/environment';
 import { IGuardJson } from '../interfaces/iguard-json';
 import { ISiteJson } from '../interfaces/isite-json';
-import { addDays, dateToString, getMidnight } from '../utils/utils';
+import {
+  addDays,
+  correctIWatchJson,
+  dateToString,
+  getMidnight,
+} from '../utils/utils';
 import { WatchCell } from '../base/WatchCell';
+import { ISetttings } from '../interfaces/isetttings';
+import { IWatch, IWatchJson } from '../interfaces/iwatch';
 const prefix: string = environment.prefixLocalStore;
 
 export class CGlobals {
@@ -65,7 +72,7 @@ export class CGlobals {
         // Set Next א' יום
         let _beginDate = getMidnight(new Date());
         let dow = _beginDate.getDay();
-        let plusDays: number = (dow == 0) ? 1 : 7 - dow;
+        let plusDays: number = dow == 0 ? 1 : 7 - dow;
         this.beginDate = addDays(_beginDate, plusDays);
       }
     }
@@ -136,6 +143,18 @@ export class CGlobals {
       } as IGuardJson)
     );
   }
+  // //IWatch
+
+  private _iWatchJsons: IWatchJson[] = [];
+  public get iWatchJsons(): IWatchJson[] {
+    return this._iWatchJsons;
+  }
+  // public set iWatches(iwArr: IWatchJson[]) {
+  //   this._iWatches = iwArr;
+  //   const _whatchArr = this._iWatches
+  //     .map(w=> new WatchCell(correctIWatchJson(w)));
+  //     this.whatchCells = _whatchArr;
+  // }
 
   //WatchCell[]
   private _watchCells: WatchCell[] = [];
@@ -152,8 +171,25 @@ export class CGlobals {
     this._mapWatchCell.clear();
     this._mapWatchCell.forEach((i) => this._mapWatchCell.set(i.idw, i));
   }
+  public setWhatchCellsByJson(iwArr: IWatchJson[]) {
+    this._iWatchJsons = iwArr;
+    const _whatchArr = iwArr.map((w) => new WatchCell(correctIWatchJson(w)));
+    this.whatchCells = _whatchArr;
+  }
+  public setWhatchCells(iwArr: IWatch[]) {
+    const _whatchArr = iwArr.map((w) => new WatchCell(w));
+    this.whatchCells = _whatchArr;
+  }
+
   public getWatchCell(idw: number) {
     return this._mapWatchCell.get(idw);
+  }
+  attachSettings(i: ISetttings) {
+    this.nDays = i.nDays | 0;
+    this.beginDate = new Date(i.beginDateStr);
+    // this.endDate = addDays(this.beginDate , this.nDays);
+    this.iSites = [...i.iSites];
+    this.iGuards = [...i.iGuards];
   }
 } // end of class
 
@@ -165,6 +201,9 @@ export const Globals = new CGlobals();
 //   IGuardJson
 // >();
 
+function ISetttings(i: any, ISetttings: any) {
+  throw new Error('Function not implemented.');
+}
 // export function globalAllSites(): ISiteJson[] {
 //   return [...globalMapSiteJson.values()];
 // }
